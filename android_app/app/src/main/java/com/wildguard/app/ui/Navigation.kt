@@ -19,6 +19,7 @@ object Routes {
     const val CONDITIONS = "conditions"
     const val INSIGHTS = "insights"
     const val SETTINGS = "settings"
+    const val HELP = "help"
 }
 
 @Composable
@@ -41,5 +42,6 @@ fun WildGuardNavigation(
         composable(Routes.CONDITIONS) { ConditionsCheckInScreen(navController) }
         composable(Routes.INSIGHTS) { InsightScreen(navController) }
         composable(Routes.SETTINGS) { SettingsScreen(navController) }
+        composable(Routes.HELP) { HelpScreen(navController) }
     }
 }

@@ -44,6 +44,11 @@ data class TacticalWindow(
     val tradeoffs: String
 )
 
+data class TacticalDetectionResult(
+    val windows: List<TacticalWindow>,
+    val seriesStartMs: Long
+)
+
 class TacticalWindowDetector(context: Context) {
 
     private val prefs: SharedPreferences =
@@ -146,8 +151,9 @@ class TacticalWindowDetector(context: Context) {
         sensor: SensorState,
         profile: ConstraintProfile,
         provider: LlmProvider
-    ): Result<List<TacticalWindow>> = try {
-        val ts = generate24hTimeSeries(sensor)
+    ): Result<TacticalDetectionResult> = try {
+        val seriesStartMs = System.currentTimeMillis()
+        val ts = generate24hTimeSeries(sensor, seriesStartMs)
         if (ts.isEmpty()) {
             Result.failure(Exception("No location data available"))
         } else {
@@ -157,21 +163,46 @@ class TacticalWindowDetector(context: Context) {
             if (response.error != null) {
                 Result.failure(Exception(response.error))
             } else {
-                Result.success(parseWindows(response.content))
+                Result.success(
+                    TacticalDetectionResult(
+                        windows = parseWindows(response.content, seriesStartMs),
+                        seriesStartMs = seriesStartMs
+                    )
+                )
             }
         }
     } catch (e: Exception) {
         Result.failure(e)
     }
 
-    private fun parseWindows(content: String): List<TacticalWindow> = try {
+    /**
+     * Converts LLM-returned local clock hours (0–24) into actual epoch timestamps.
+     * The LLM sees localHour values that wrap at midnight, so a window at hour 6
+     * means 6 AM on whichever calendar day that falls in the 24h series.
+     */
+    private fun parseWindows(content: String, seriesStartMs: Long): List<TacticalWindow> = try {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = seriesStartMs
+        val currentLocalHour = cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE) / 60.0
+
+        fun localHourToEpoch(h: Double): Long {
+            var deltaH = h - currentLocalHour
+            if (deltaH < 0) deltaH += 24.0
+            return seriesStartMs + (deltaH * 3_600_000).toLong()
+        }
+
         val jsonStr = extractJsonArray(content)
         val arr = JsonParser.parseString(jsonStr).asJsonArray
         arr.map { elem ->
             val obj = elem.asJsonObject
+            val startHour = obj.get("startHour")?.asDouble ?: 0.0
+            val endHour   = obj.get("endHour")?.asDouble   ?: 0.0
+            val startEpoch = localHourToEpoch(startHour)
+            var endEpoch   = localHourToEpoch(endHour)
+            if (endEpoch <= startEpoch) endEpoch += 24 * 3_600_000L
             TacticalWindow(
-                startMs = obj.get("startHour")?.asDouble?.let { (it * 3600_000).toLong() } ?: 0L,
-                endMs = obj.get("endHour")?.asDouble?.let { (it * 3600_000).toLong() } ?: 0L,
+                startMs = startEpoch,
+                endMs = endEpoch,
                 bindingConstraint = obj.get("bindingConstraint")?.asString ?: "unknown",
                 qualityScore = obj.get("qualityScore")?.asDouble ?: 0.0,
                 tradeoffs = obj.get("tradeoffs")?.asString ?: ""

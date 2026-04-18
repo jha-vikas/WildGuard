@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.wildguard.app.llm.provider.*
 import com.wildguard.app.modules.uv.SkinType
 import com.wildguard.app.modules.uv.SurfaceType
+import com.wildguard.app.ui.Routes
 import com.wildguard.app.ui.theme.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -228,6 +229,14 @@ fun SettingsScreen(navController: NavController) {
                     description = "Review prompt before each LLM call",
                     checked = state.promptReview,
                     onChecked = { vm.setPromptReview(it) }
+                )
+            }
+
+            // ── Help ─────────────────────────────────────────────────
+            item { SectionHeader("Help") }
+            item {
+                HelpRow(
+                    onOpen = { navController.navigate(Routes.HELP) }
                 )
             }
 
@@ -457,6 +466,18 @@ private fun AboutRow(version: String) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun HelpRow(onOpen: () -> Unit) {
+    OutlinedButton(
+        onClick = onOpen,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(Icons.Default.HelpOutline, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Text("Open Help & Troubleshooting")
     }
 }
 

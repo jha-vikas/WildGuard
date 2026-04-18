@@ -1,6 +1,7 @@
 package com.wildguard.app.ui.screens
 
 import android.app.Application
+import android.content.Context
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -8,8 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,6 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,10 +37,15 @@ import com.wildguard.app.WildGuardApp
 import com.wildguard.app.core.model.SensorState
 import com.wildguard.app.llm.insight.*
 import com.wildguard.app.llm.provider.ProviderRegistry
+import com.wildguard.app.llm.provider.ReviewableProvider
 import com.wildguard.app.ui.theme.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 // ── View State ───────────────────────────────────────────────────────────
 
@@ -46,6 +55,7 @@ data class InsightUiState(
     val isLoading: Boolean = false,
     val isOffline: Boolean = false,
     val tacticalWindows: List<TacticalWindow> = emptyList(),
+    val tacticalSeriesStartMs: Long = 0L,
     val driftRisk: String = "none",
     val driftWarning: DriftWarning? = null,
     val celestialEvents: List<CelestialEvent> = emptyList(),
@@ -53,7 +63,8 @@ data class InsightUiState(
     val consistencyAlert: ConsistencyAlert? = null,
     val bindingAnalysis: BindingAnalysis? = null,
     val showBindingInput: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val pendingPromptReview: String? = null
 )
 
 sealed class SensorHealthState {
@@ -74,6 +85,9 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
     private val consistencyChecker = SensorConsistencyChecker()
     private val bindingPlanner = BindingConstraintPlanner()
     private val sensorHub = WildGuardApp.instance.sensorHub
+    private val settingsPrefs = application.getSharedPreferences("wildguard_settings", Context.MODE_PRIVATE)
+
+    private val reviewChannel = Channel<Boolean>(Channel.RENDEZVOUS)
 
     private val _state = MutableStateFlow(InsightUiState())
     val state: StateFlow<InsightUiState> = _state
@@ -119,11 +133,25 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
         _state.value = _state.value.copy(showBindingInput = !_state.value.showBindingInput)
     }
 
+    fun confirmPromptReview() { viewModelScope.launch { reviewChannel.send(true) } }
+    fun cancelPromptReview()  { viewModelScope.launch { reviewChannel.send(false) } }
+
+    private fun wrapWithReviewIfEnabled(base: com.wildguard.app.llm.provider.LlmProvider): com.wildguard.app.llm.provider.LlmProvider {
+        val enabled = settingsPrefs.getBoolean("prompt_review", false)
+        return if (!enabled) base else ReviewableProvider(base) { prompt ->
+            _state.value = _state.value.copy(pendingPromptReview = prompt)
+            val confirmed = reviewChannel.receive()
+            _state.value = _state.value.copy(pendingPromptReview = null)
+            confirmed
+        }
+    }
+
     fun runAllInsights() {
-        val provider = registry.getActiveProvider() ?: run {
+        val rawProvider = registry.getActiveProvider() ?: run {
             _state.value = _state.value.copy(errorMessage = "No provider configured")
             return
         }
+        val provider = wrapWithReviewIfEnabled(rawProvider)
 
         _state.value = _state.value.copy(
             isLoading = true,
@@ -140,7 +168,12 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
             val defaultProfile = tacticalDetector.loadConstraintProfiles().firstOrNull()
                 ?: ConstraintProfile(name = "default", maxUV = 8.0, minSunElDeg = 5.0)
             tacticalDetector.detect(currentSensor, defaultProfile, provider)
-                .onSuccess { _state.value = _state.value.copy(tacticalWindows = it) }
+                .onSuccess {
+                    _state.value = _state.value.copy(
+                        tacticalWindows = it.windows,
+                        tacticalSeriesStartMs = it.seriesStartMs
+                    )
+                }
                 .onFailure { failureCount++ }
 
             if (driftAnalyzer.shouldTriggerLlm()) {
@@ -180,7 +213,8 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun runBindingAnalysis(legs: List<TripLeg>, startMs: Long) {
-        val provider = registry.getActiveProvider() ?: return
+        val rawProvider = registry.getActiveProvider() ?: return
+        val provider = wrapWithReviewIfEnabled(rawProvider)
         val loc = currentSensor.location ?: return
 
         _state.value = _state.value.copy(isLoading = true)
@@ -204,6 +238,14 @@ fun InsightScreen(navController: NavController) {
 
     LaunchedEffect(Unit) { vm.refreshProviderStatus() }
 
+    if (state.pendingPromptReview != null) {
+        PromptReviewDialog(
+            prompt = state.pendingPromptReview!!,
+            onConfirm = { vm.confirmPromptReview() },
+            onCancel = { vm.cancelPromptReview() }
+        )
+    }
+
     ModuleScaffold(title = "AI Insights", navController = navController) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -225,7 +267,7 @@ fun InsightScreen(navController: NavController) {
                     item { OfflineCard() }
                 } else {
                     // Tactical Windows
-                    item { TacticalWindowsCard(state.tacticalWindows) }
+                    item { TacticalWindowsCard(state.tacticalWindows, state.tacticalSeriesStartMs) }
 
                     // Drift Status
                     item { DriftStatusCard(state.driftRisk, state.driftWarning) }
@@ -316,10 +358,19 @@ private fun ProviderHeader(name: String, isLoading: Boolean, onRefresh: () -> Un
 }
 
 @Composable
-private fun TacticalWindowsCard(windows: List<TacticalWindow>) {
+private fun TacticalWindowsCard(windows: List<TacticalWindow>, seriesStartMs: Long) {
+    val timeSdf    = remember { SimpleDateFormat("h:mma", Locale.getDefault()) }
+    val markerSdf  = remember { SimpleDateFormat("ha",    Locale.getDefault()) }
+    val totalMs    = 24 * 3_600_000L
+
     LlmCard {
         Text("Tactical Windows", style = MaterialTheme.typography.titleSmall)
-        Spacer(Modifier.height(8.dp))
+        Text(
+            "Best time blocks where conditions align. Color = quality: green good, amber constrained, red poor.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+        )
+        Spacer(Modifier.height(10.dp))
 
         if (windows.isEmpty()) {
             Text(
@@ -328,41 +379,64 @@ private fun TacticalWindowsCard(windows: List<TacticalWindow>) {
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         } else {
-            // Timeline bar
-            Row(
+            // ── Positioned timeline bar ───────────────────────────────
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(24.dp)
+                    .height(20.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.07f))
             ) {
                 windows.forEach { w ->
+                    if (seriesStartMs == 0L) return@forEach
+                    val startFrac = ((w.startMs - seriesStartMs).toFloat() / totalMs).coerceIn(0f, 1f)
+                    val widthFrac = ((w.endMs - w.startMs).toFloat() / totalMs).coerceIn(0.01f, 1f - startFrac)
                     val color = when {
                         w.qualityScore > 0.7 -> WildGreen
                         w.qualityScore > 0.4 -> WildAmber
                         else -> WildRed
                     }
-                    val weight = ((w.endMs - w.startMs).toFloat() / (24 * 3600_000f))
-                        .coerceIn(0.02f, 1f)
                     Box(
                         modifier = Modifier
-                            .weight(weight)
-                            .fillMaxHeight()
-                            .background(color.copy(alpha = 0.7f))
+                            .offset(x = maxWidth * startFrac)
+                            .width(maxWidth * widthFrac)
+                            .height(20.dp)
+                            .background(color.copy(alpha = 0.75f))
                     )
-                    Spacer(Modifier.width(1.dp))
                 }
             }
-            Spacer(Modifier.height(8.dp))
 
-            windows.take(3).forEach { w ->
-                val hrs = { ms: Long -> "%.1fh".format(ms / 3_600_000.0) }
+            // ── Hourly tick labels ────────────────────────────────────
+            if (seriesStartMs != 0L) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    listOf(0, 6, 12, 18, 24).forEach { offsetH ->
+                        Text(
+                            text = markerSdf.format(Date(seriesStartMs + offsetH * 3_600_000L)).lowercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+
+            // ── Window list with actual clock times ───────────────────
+            windows.take(3).forEach { w ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        "${hrs(w.startMs)}–${hrs(w.endMs)}",
+                        "${timeSdf.format(Date(w.startMs)).lowercase()} – ${timeSdf.format(Date(w.endMs)).lowercase()}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium
                     )
@@ -388,6 +462,11 @@ private fun DriftStatusCard(risk: String, warning: DriftWarning?) {
             Spacer(Modifier.width(12.dp))
             DriftPill(risk)
         }
+        Text(
+            "Trend watch — not current conditions, but which direction things are heading over time.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+        )
         if (warning != null) {
             Spacer(Modifier.height(8.dp))
             Text(
@@ -735,6 +814,64 @@ private fun SkeletonCard() {
             )
         }
     }
+}
+
+@Composable
+private fun PromptReviewDialog(
+    prompt: String,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.RateReview,
+                    contentDescription = null,
+                    tint = WildAmber,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Review Prompt", style = MaterialTheme.typography.titleSmall)
+            }
+        },
+        text = {
+            Column {
+                Text(
+                    "This prompt will be sent to your LLM provider. Review before sending.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                Spacer(Modifier.height(12.dp))
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 280.dp)
+                ) {
+                    Text(
+                        text = prompt,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .verticalScroll(rememberScrollState()),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) { Text("Send") }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onCancel,
+                colors = ButtonDefaults.textButtonColors(contentColor = WildRed)
+            ) { Text("Cancel") }
+        }
+    )
 }
 
 @Composable
