@@ -546,27 +546,62 @@ private fun TacticalWindowsCard(windows: List<TacticalWindow>, seriesStartMs: Lo
             Spacer(Modifier.height(10.dp))
 
             // ── Window list with actual clock times ───────────────────
-            windows.take(3).forEach { w ->
-                Row(
+            windows.take(3).forEachIndexed { index, w ->
+                if (index > 0) {
+                    Spacer(Modifier.height(6.dp))
+                }
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 2.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(vertical = 2.dp)
                 ) {
-                    Text(
-                        "${timeSdf.format(Date(w.startMs)).lowercase()} – ${timeSdf.format(Date(w.endMs)).lowercase()}",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        w.bindingConstraint,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = 160.dp)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "${timeSdf.format(Date(w.startMs)).lowercase()} – ${timeSdf.format(Date(w.endMs)).lowercase()}",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                        val qualityLabel = when {
+                            w.qualityScore > 0.7 -> "good"
+                            w.qualityScore > 0.4 -> "fair"
+                            else -> "poor"
+                        }
+                        val qualityColor = when {
+                            w.qualityScore > 0.7 -> WildGreen
+                            w.qualityScore > 0.4 -> WildAmber
+                            else -> WildRed
+                        }
+                        Text(
+                            "${"%.0f".format(w.qualityScore * 100)}% · $qualityLabel",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = qualityColor
+                        )
+                    }
+                    if (w.bindingConstraint.isNotBlank()) {
+                        Text(
+                            w.bindingConstraint,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 2.dp)
+                        )
+                    }
+                    if (w.tradeoffs.isNotBlank()) {
+                        Text(
+                            w.tradeoffs,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                            fontStyle = FontStyle.Italic,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 1.dp)
+                        )
+                    }
                 }
             }
         }
