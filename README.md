@@ -173,3 +173,6 @@ By submitting a pull request you agree that your contributions may be used and c
 - Magnetic declination uses the [World Magnetic Model (WMM)](https://www.ngdc.noaa.gov/geomag/WMM/)
 - UV index categorization follows [WHO UV Index guidelines](https://www.who.int/news-room/questions-and-answers/item/radiation-the-ultraviolet-(uv)-index)
 - Skin type classification uses the [Fitzpatrick scale](https://en.wikipedia.org/wiki/Fitzpatrick_scale)
+
+## Demo video
+https://youtu.be/A2QU6fon4KQ
