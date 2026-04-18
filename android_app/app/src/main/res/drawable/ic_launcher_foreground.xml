@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Main pad (ellipse at center 54,60) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,60 a16,12 0 1,0 32,0 a16,12 0 1,0 -32,0"/>
+
+    <!-- Toe pad top-left (circle at 36,38, r=6) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,38 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0"/>
+
+    <!-- Toe pad top-center-left (circle at 46,30, r=6) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,30 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0"/>
+
+    <!-- Toe pad top-center-right (circle at 62,30, r=6) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M56,30 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0"/>
+
+    <!-- Toe pad top-right (circle at 72,38, r=6) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,38 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0"/>
+</vector>
