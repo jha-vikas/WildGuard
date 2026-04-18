@@ -29,7 +29,11 @@ import com.wildguard.app.modules.uv.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.roundToInt
 
 // ── ViewModel ────────────────────────────────────────────────────────
@@ -41,7 +45,8 @@ data class UVScreenState(
     val skinType: SkinType = SkinType.TYPE_II,
     val spf: Int = 30,
     val surfaceType: SurfaceType = SurfaceType.GRASS,
-    val ozoneFactor: Double = 1.0
+    val ozoneFactor: Double = 1.0,
+    val computedAtUtcMillis: Long = 0L
 )
 
 class UVViewModel : ViewModel() {
@@ -78,7 +83,8 @@ class UVViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(
             sensorState = sensors,
             sunPosition = sunPos,
-            uvResult = uvResult
+            uvResult = uvResult,
+            computedAtUtcMillis = now
         )
     }
 
@@ -119,7 +125,7 @@ fun UVScreen(navController: NavController, vm: UVViewModel = viewModel()) {
             ExposureCard(state.uvResult)
             VitaminDCard(state.uvResult)
             DailyCurveChart(state.uvResult?.dailyCurve)
-            SunPositionCard(state.sunPosition)
+            SunPositionCard(state.sunPosition, state.computedAtUtcMillis)
             SensorStatusBar(state.sensorState)
         }
     }
@@ -318,7 +324,7 @@ private fun DailyCurveChart(curve: List<Pair<Int, Double>>?) {
 // ── Sun Position ─────────────────────────────────────────────────────
 
 @Composable
-private fun SunPositionCard(sun: SunPosition?) {
+private fun SunPositionCard(sun: SunPosition?, anchorUtcMillis: Long) {
     if (sun == null) return
 
     Card(
@@ -330,9 +336,9 @@ private fun SunPositionCard(sun: SunPosition?) {
             Spacer(modifier = Modifier.height(8.dp))
             InfoRow("Altitude", String.format(Locale.US, "%.1f°", sun.altitudeDeg))
             InfoRow("Azimuth", String.format(Locale.US, "%.1f°", sun.azimuthDeg))
-            InfoRow("Sunrise (UTC)", formatUtcHours(sun.sunriseUtc))
-            InfoRow("Sunset (UTC)", formatUtcHours(sun.sunsetUtc))
-            InfoRow("Solar Noon (UTC)", formatUtcHours(sun.solarNoonUtc))
+            InfoRow("Sunrise", formatLocalTimeFromUtcHours(sun.sunriseUtc, anchorUtcMillis))
+            InfoRow("Sunset", formatLocalTimeFromUtcHours(sun.sunsetUtc, anchorUtcMillis))
+            InfoRow("Solar Noon", formatLocalTimeFromUtcHours(sun.solarNoonUtc, anchorUtcMillis))
         }
     }
 }
@@ -395,9 +401,22 @@ private fun formatMinutes(min: Double?): String {
     return if (rounded >= 60) "${rounded / 60}h ${rounded % 60}m" else "${rounded}m"
 }
 
-private fun formatUtcHours(hours: Double): String {
-    if (hours < 0 || hours >= 24) return "—"
-    val h = hours.toInt()
-    val m = ((hours - h) * 60).roundToInt()
-    return String.format(Locale.US, "%02d:%02d", h, m)
+/**
+ * Converts a fractional UTC hour (0..24, anchored to UTC midnight of the
+ * computation day) into a local-time "HH:mm" string in the device's timezone.
+ */
+private fun formatLocalTimeFromUtcHours(hoursUtc: Double, anchorUtcMillis: Long): String {
+    if (hoursUtc < 0 || hoursUtc >= 24) return "—"
+    val utcMidnight = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+        timeInMillis = anchorUtcMillis
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+    val eventMillis = utcMidnight + (hoursUtc * 3_600_000.0).toLong()
+    val fmt = SimpleDateFormat("HH:mm", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()
+    }
+    return fmt.format(Date(eventMillis))
 }

@@ -25,6 +25,11 @@ import androidx.navigation.NavController
 import com.wildguard.app.WildGuardApp
 import com.wildguard.app.modules.celestial.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.*
 
 data class CelestialUiState(
@@ -38,6 +43,10 @@ data class CelestialUiState(
     val goldenHourEnd: String? = null,
     val blueHourStart: String? = null,
     val blueHourEnd: String? = null,
+    val computedAtUtcMillis: Long = 0L,
+    val timezoneLabel: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
     val isLoaded: Boolean = false
 )
 
@@ -80,6 +89,7 @@ class CelestialViewModel : ViewModel() {
 
         val sunTimes = computeTwilightTimes(lat, lon, utcMillis)
 
+        val tz = TimeZone.getDefault()
         uiState = CelestialUiState(
             moon = moon,
             planets = planets,
@@ -91,6 +101,10 @@ class CelestialViewModel : ViewModel() {
             goldenHourEnd = sunTimes.goldenHourEnd,
             blueHourStart = sunTimes.blueHourStart,
             blueHourEnd = sunTimes.blueHourEnd,
+            computedAtUtcMillis = utcMillis,
+            timezoneLabel = tz.getDisplayName(tz.inDaylightTime(Date(utcMillis)), TimeZone.SHORT),
+            latitude = lat,
+            longitude = lon,
             isLoaded = true
         )
     }
@@ -102,18 +116,24 @@ class CelestialViewModel : ViewModel() {
         val blueHourEnd: String?
     )
 
+    /**
+     * Scans sun altitude from local noon to local midnight (device timezone)
+     * to find the evening sunset, golden hour, and blue hour. Returns times
+     * already formatted in the device's local timezone.
+     */
     private fun computeTwilightTimes(lat: Double, lon: Double, utcMillis: Long): TwilightTimes {
-        val jd = MoonCalculator.toJulianDay(utcMillis)
-        val jdMidnight = floor(jd - 0.5) + 0.5
+        val tz = TimeZone.getDefault()
+        val localNoonMillis = Calendar.getInstance(tz).apply {
+            timeInMillis = utcMillis
+            set(Calendar.HOUR_OF_DAY, 12)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
 
-        var sunsetHour: Double? = null
-        var goldenStart: Double? = null
-        var blueStart: Double? = null
-        var blueEnd: Double? = null
-
-        fun sunAltAt(h: Double): Double {
-            val jdH = jdMidnight + h / 24.0
-            val T = (jdH - 2451545.0) / 36525.0
+        fun sunAltAt(millis: Long): Double {
+            val jd = MoonCalculator.toJulianDay(millis)
+            val T = (jd - 2451545.0) / 36525.0
             val M = ((357.5291 + 35999.0503 * T) % 360.0 + 360.0) % 360.0
             val C = 1.9146 * sin(Math.toRadians(M)) + 0.02 * sin(Math.toRadians(2 * M))
             val sunLon = ((M + C + 180.0 + 102.9372) % 360.0 + 360.0) % 360.0
@@ -127,7 +147,7 @@ class CelestialViewModel : ViewModel() {
             val dec = Math.toDegrees(
                 asin(sin(Math.toRadians(sunLon)) * sin(Math.toRadians(obliquity)))
             )
-            val gmst = MoonCalculator.greenwichMeanSiderealTime(jdH)
+            val gmst = MoonCalculator.greenwichMeanSiderealTime(jd)
             val lst = gmst + lon
             val (alt, _) = MoonCalculator.equatorialToHorizontal(
                 ((ra % 360.0) + 360.0) % 360.0, dec, lat, lst
@@ -135,42 +155,51 @@ class CelestialViewModel : ViewModel() {
             return alt
         }
 
-        // Scan afternoon/evening (hours 12-24) for golden/blue hour
-        var prevAlt = sunAltAt(12.0)
-        for (m in (12 * 60 + 1)..(24 * 60)) {
-            val h = m / 60.0
-            val alt = sunAltAt(h)
+        var sunsetMillis: Long? = null
+        var goldenStartMillis: Long? = null
+        var blueStartMillis: Long? = null
+        var blueEndMillis: Long? = null
 
-            if (prevAlt > 0 && alt <= 0 && sunsetHour == null) {
-                sunsetHour = h
-            }
-            // Golden hour: sun between 6° and 0° (evening)
-            if (prevAlt > 6 && alt <= 6 && goldenStart == null) {
-                goldenStart = h
-            }
-            // Blue hour: sun between -4° and -6° (evening)
-            if (prevAlt > -4 && alt <= -4 && blueStart == null) {
-                blueStart = h
-            }
-            if (prevAlt > -6 && alt <= -6 && blueEnd == null) {
-                blueEnd = h
-            }
+        var prevAlt = sunAltAt(localNoonMillis)
+        // Scan 12 hours of local evening (local noon → local midnight) minute-by-minute
+        for (m in 1..(12 * 60)) {
+            val t = localNoonMillis + m * 60_000L
+            val alt = sunAltAt(t)
+
+            if (prevAlt > 0 && alt <= 0 && sunsetMillis == null) sunsetMillis = t
+            if (prevAlt > 6 && alt <= 6 && goldenStartMillis == null) goldenStartMillis = t
+            if (prevAlt > -4 && alt <= -4 && blueStartMillis == null) blueStartMillis = t
+            if (prevAlt > -6 && alt <= -6 && blueEndMillis == null) blueEndMillis = t
             prevAlt = alt
         }
 
+        val fmt = SimpleDateFormat("HH:mm", Locale.getDefault()).apply { timeZone = tz }
         return TwilightTimes(
-            goldenHourStart = goldenStart?.let { formatUtcHour(it) },
-            goldenHourEnd = sunsetHour?.let { formatUtcHour(it) },
-            blueHourStart = blueStart?.let { formatUtcHour(it) },
-            blueHourEnd = blueEnd?.let { formatUtcHour(it) }
+            goldenHourStart = goldenStartMillis?.let { fmt.format(Date(it)) },
+            goldenHourEnd = sunsetMillis?.let { fmt.format(Date(it)) },
+            blueHourStart = blueStartMillis?.let { fmt.format(Date(it)) },
+            blueHourEnd = blueEndMillis?.let { fmt.format(Date(it)) }
         )
     }
 }
 
-private fun formatUtcHour(h: Double): String {
-    val hh = h.toInt() % 24
-    val mm = ((h - h.toInt()) * 60).toInt()
-    return "%02d:%02d UTC".format(hh, mm)
+/**
+ * Converts a fractional UTC hour (0..24, anchored to UTC midnight of the
+ * computation day) into a local-time "HH:mm" string in the device's timezone.
+ */
+private fun formatLocalHour(hoursUtc: Double, anchorUtcMillis: Long): String {
+    val utcMidnight = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+        timeInMillis = anchorUtcMillis
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+    val eventMillis = utcMidnight + (hoursUtc * 3_600_000.0).toLong()
+    val fmt = SimpleDateFormat("HH:mm", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()
+    }
+    return fmt.format(Date(eventMillis))
 }
 
 @Composable
@@ -193,8 +222,9 @@ fun CelestialScreen(navController: NavController, vm: CelestialViewModel = viewM
                 return@ModuleScaffold
             }
 
-            state.moon?.let { MoonSection(it) }
-            PlanetSection(state.planets)
+            LocationHeader(state)
+            state.moon?.let { MoonSection(it, state.computedAtUtcMillis) }
+            PlanetSection(state.planets, state.computedAtUtcMillis)
             StarSection(state.visibleStars, state.navigationStars, state.polaris)
             state.skyAssessment?.let { SkyQualitySection(it) }
             TwilightSection(state)
@@ -204,7 +234,46 @@ fun CelestialScreen(navController: NavController, vm: CelestialViewModel = viewM
 }
 
 @Composable
-private fun MoonSection(moon: MoonData) {
+private fun LocationHeader(state: CelestialUiState) {
+    val localTimeFmt = SimpleDateFormat("HH:mm", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()
+    }
+    val localTime = localTimeFmt.format(Date(state.computedAtUtcMillis))
+    val latDir = if (state.latitude >= 0) "N" else "S"
+    val lonDir = if (state.longitude >= 0) "E" else "W"
+    val locText = "%.4f\u00B0%s, %.4f\u00B0%s".format(
+        abs(state.latitude), latDir, abs(state.longitude), lonDir
+    )
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                locText,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+            )
+            Text(
+                "$localTime ${state.timezoneLabel}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun MoonSection(moon: MoonData, anchorUtcMillis: Long) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -235,8 +304,8 @@ private fun MoonSection(moon: MoonData) {
             }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                InfoColumn("Moonrise", moon.moonriseUtcHours?.let { formatUtcHour(it) } ?: "—")
-                InfoColumn("Moonset", moon.moonsetUtcHours?.let { formatUtcHour(it) } ?: "—")
+                InfoColumn("Moonrise", moon.moonriseUtcHours?.let { formatLocalHour(it, anchorUtcMillis) } ?: "—")
+                InfoColumn("Moonset", moon.moonsetUtcHours?.let { formatLocalHour(it, anchorUtcMillis) } ?: "—")
                 InfoColumn("Phase", if (moon.isWaxing) "Waxing" else "Waning")
             }
         }
@@ -244,7 +313,7 @@ private fun MoonSection(moon: MoonData) {
 }
 
 @Composable
-private fun PlanetSection(planets: List<PlanetData>) {
+private fun PlanetSection(planets: List<PlanetData>, anchorUtcMillis: Long) {
     val visible = planets.filter { it.isVisible }
 
     Card(
@@ -289,7 +358,7 @@ private fun PlanetSection(planets: List<PlanetData>) {
                 )
                 belowHorizon.forEach { planet ->
                     Text(
-                        "${planet.name} rises ${planet.riseUtcHours?.let { formatUtcHour(it) } ?: ""}",
+                        "${planet.name} rises ${planet.riseUtcHours?.let { formatLocalHour(it, anchorUtcMillis) } ?: ""}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )

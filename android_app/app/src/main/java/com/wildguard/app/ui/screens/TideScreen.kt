@@ -315,7 +315,7 @@ private fun TideCurveCard(state: TideUiState) {
                     )
                 }
 
-                val sdf = SimpleDateFormat("HH", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
+                val sdf = SimpleDateFormat("HH", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
                 val hourMs = 3_600_000L
                 var tickT = ((minT / hourMs) + 1) * hourMs
                 while (tickT < maxT) {
@@ -380,7 +380,7 @@ private fun NextTidesCard(state: TideUiState) {
     if (state.nextExtremes.isEmpty()) return
 
     val sdf = remember {
-        SimpleDateFormat("EEE HH:mm", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
+        SimpleDateFormat("EEE HH:mm", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
     }
 
     Card(
@@ -403,7 +403,7 @@ private fun NextTidesCard(state: TideUiState) {
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        sdf.format(Date(extreme.timeMillis)) + " UTC",
+                        sdf.format(Date(extreme.timeMillis)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
