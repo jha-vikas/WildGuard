@@ -5,10 +5,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.InputStreamReader
 
-class AssetRepository(private val context: Context) {
+class AssetRepository(@PublishedApi internal val context: Context) {
 
     @PublishedApi
-    internal val gson = Gson()git 
+    internal val gson = Gson()
 
     fun readJsonString(filename: String): String {
         return context.assets.open(filename).bufferedReader().use { it.readText() }
