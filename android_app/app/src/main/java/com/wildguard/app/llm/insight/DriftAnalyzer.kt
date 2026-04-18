@@ -125,9 +125,15 @@ class DriftAnalyzer {
             .replace("{DELTAS}", deltasStr)
     }
 
-    suspend fun analyze(provider: LlmProvider): Result<DriftWarning> = try {
+    /**
+     * Returns:
+     *  - success(DriftWarning) — drift exceeds threshold and LLM produced a warning
+     *  - success(null)         — no analysis needed (sub-threshold). NOT a failure.
+     *  - failure(Exception)    — real error (LLM provider error, network, etc.)
+     */
+    suspend fun analyze(provider: LlmProvider): Result<DriftWarning?> = try {
         if (!shouldTriggerLlm()) {
-            Result.failure(Exception("Drift below threshold"))
+            Result.success(null)
         } else {
             val prompt = buildPrompt()
             val response = provider.generate(prompt, PromptTemplates.DRIFT_ANALYSIS_SYSTEM)

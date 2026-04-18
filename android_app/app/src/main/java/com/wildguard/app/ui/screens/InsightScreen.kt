@@ -250,7 +250,12 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
             celestialEvents = emptyList(),
             consistencyAlert = null
         )
-        var failureCount = 0
+        // Collect name + reason of each real failure so the banner can explain WHAT
+        // failed and WHY, instead of a vague "1 insight failed".
+        val failures = mutableListOf<Pair<String, String>>()
+        fun recordFailure(name: String, t: Throwable) {
+            failures += name to (t.message?.takeIf { it.isNotBlank() } ?: t::class.java.simpleName)
+        }
 
         viewModelScope.launch {
             val defaultProfile = tacticalDetector.loadConstraintProfiles().firstOrNull()
@@ -273,40 +278,61 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
                         tacticalSeriesStartMs = it.seriesStartMs
                     )
                 }
-                .onFailure { failureCount++ }
+                .onFailure { recordFailure("Tactical windows", it) }
 
             if (driftAnalyzer.shouldTriggerLlm()) {
                 driftAnalyzer.analyze(provider)
-                    .onSuccess { _state.value = _state.value.copy(driftWarning = it, driftRisk = it.riskLabel) }
-                    .onFailure { failureCount++ }
+                    .onSuccess { warning ->
+                        // null = sub-threshold, not an error. Only update state when real.
+                        if (warning != null) {
+                            _state.value = _state.value.copy(
+                                driftWarning = warning,
+                                driftRisk = warning.riskLabel
+                            )
+                        }
+                    }
+                    .onFailure { recordFailure("Drift analysis", it) }
             }
 
             val loc = currentSensor.location
             if (loc != null) {
                 celestialFinder.find(loc.latitude, loc.longitude, provider)
                     .onSuccess { _state.value = _state.value.copy(celestialEvents = it) }
-                    .onFailure { failureCount++ }
+                    .onFailure { recordFailure("Celestial events", it) }
             }
 
             if (_state.value.sensorHealth is SensorHealthState.Warning) {
                 consistencyChecker.checkAndAnalyze(currentSensor, provider)
-                    .onSuccess { _state.value = _state.value.copy(consistencyAlert = it) }
-                    .onFailure { failureCount++ }
+                    .onSuccess { alert ->
+                        // null = sensors actually consistent, not an error.
+                        if (alert != null) {
+                            _state.value = _state.value.copy(consistencyAlert = alert)
+                        }
+                    }
+                    .onFailure { recordFailure("Sensor consistency", it) }
             }
 
-            val allFailed = failureCount > 0 &&
+            val allFailed = failures.isNotEmpty() &&
                 _state.value.tacticalWindows.isEmpty() &&
                 _state.value.celestialEvents.isEmpty() &&
                 _state.value.driftWarning == null &&
                 _state.value.consistencyAlert == null
 
+            val banner = when {
+                failures.isEmpty() -> _state.value.errorMessage
+                allFailed -> null // offline banner handles this case
+                else -> {
+                    // Show names + first error reason (truncated) so user knows what/why.
+                    val names = failures.joinToString(", ") { it.first }
+                    val firstReason = failures.first().second.take(120)
+                    "Failed: $names — $firstReason"
+                }
+            }
+
             _state.value = _state.value.copy(
                 isLoading = false,
                 isOffline = allFailed,
-                errorMessage = if (failureCount > 0 && !allFailed)
-                    "$failureCount insight(s) failed — partial results shown"
-                else if (allFailed) null
-                else _state.value.errorMessage
+                errorMessage = banner
             )
         }
     }
