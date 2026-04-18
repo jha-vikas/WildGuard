@@ -1,0 +1,28 @@
+{
+  "windChill": {
+    "thresholds": [
+      {"tempC": -28, "risk": "HIGH", "frostbiteMin": 30, "description": "Frostbite possible in 30 minutes on exposed skin"},
+      {"tempC": -35, "risk": "HIGH", "frostbiteMin": 15, "description": "Frostbite possible in 10-15 minutes"},
+      {"tempC": -40, "risk": "EXTREME", "frostbiteMin": 10, "description": "Frostbite possible in 5-10 minutes"},
+      {"tempC": -48, "risk": "EXTREME", "frostbiteMin": 5, "description": "Frostbite possible in under 5 minutes"},
+      {"tempC": -55, "risk": "EXTREME", "frostbiteMin": 2, "description": "Frostbite possible in under 2 minutes"}
+    ]
+  },
+  "heatIndex": {
+    "thresholds": [
+      {"minC": 27, "maxC": 32, "risk": "CAUTION", "description": "Fatigue possible with prolonged exposure"},
+      {"minC": 32, "maxC": 39, "risk": "EXTREME_CAUTION", "description": "Heat cramps and heat exhaustion possible"},
+      {"minC": 39, "maxC": 51, "risk": "DANGER", "description": "Heat exhaustion likely, heat stroke possible"},
+      {"minC": 51, "maxC": 100, "risk": "EXTREME_DANGER", "description": "Heat stroke highly likely"}
+    ]
+  },
+  "wbgt": {
+    "thresholds": [
+      {"maxC": 25.6, "flag": "WHITE", "workRestRatio": "50/10", "description": "No limit on physical activity"},
+      {"maxC": 27.8, "flag": "GREEN", "workRestRatio": "50/10", "description": "80% work capacity for acclimatized"},
+      {"maxC": 29.4, "flag": "YELLOW", "workRestRatio": "45/15", "description": "Caution: limited heavy work"},
+      {"maxC": 31.1, "flag": "RED", "workRestRatio": "30/30", "description": "Limit physical activity"},
+      {"maxC": 32.2, "flag": "BLACK", "workRestRatio": "20/40", "description": "Suspend all non-essential physical activity"}
+    ]
+  }
+}

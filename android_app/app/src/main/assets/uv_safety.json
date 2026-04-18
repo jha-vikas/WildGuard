@@ -1,0 +1,7 @@
+[
+  {"min": 0, "max": 2, "category": "Low", "color": "#4CAF50", "actions": ["No protection needed", "Wear sunglasses on bright days"]},
+  {"min": 3, "max": 5, "category": "Moderate", "color": "#FFEB3B", "actions": ["Seek shade during midday hours", "Wear sunscreen SPF 30+", "Wear a hat and sunglasses"]},
+  {"min": 6, "max": 7, "category": "High", "color": "#FF9800", "actions": ["Reduce time in the sun 10am-4pm", "Apply sunscreen SPF 30+ every 2 hours", "Wear protective clothing, hat, sunglasses", "Seek shade"]},
+  {"min": 8, "max": 10, "category": "Very High", "color": "#F44336", "actions": ["Minimize sun exposure 10am-4pm", "Apply SPF 50+ sunscreen generously", "Wear protective clothing and wide-brim hat", "Seek shade — unprotected skin burns quickly"]},
+  {"min": 11, "max": 15, "category": "Extreme", "color": "#9C27B0", "actions": ["Avoid sun exposure 10am-4pm", "Apply SPF 50+ every 90 minutes", "Full protective clothing required", "Seek shade — burns in minutes"]}
+]

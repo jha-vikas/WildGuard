@@ -1,0 +1,8 @@
+[
+  {"type": "I", "name": "Very Fair", "description": "Always burns, never tans. Light skin, light eyes, freckles.", "med": 2.0, "vitDBaseRate": 4.0},
+  {"type": "II", "name": "Fair", "description": "Burns easily, tans minimally. Light skin, light eyes.", "med": 2.5, "vitDBaseRate": 5.0},
+  {"type": "III", "name": "Medium", "description": "Sometimes burns, gradually tans. Medium skin.", "med": 3.5, "vitDBaseRate": 6.5},
+  {"type": "IV", "name": "Olive", "description": "Rarely burns, tans easily. Olive/brown skin.", "med": 4.5, "vitDBaseRate": 8.0},
+  {"type": "V", "name": "Brown", "description": "Very rarely burns, tans darkly. Brown skin.", "med": 6.0, "vitDBaseRate": 12.0},
+  {"type": "VI", "name": "Dark", "description": "Never burns. Dark brown/black skin.", "med": 10.0, "vitDBaseRate": 20.0}
+]

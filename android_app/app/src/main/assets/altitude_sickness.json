@@ -1,0 +1,24 @@
+{
+  "thresholds": {
+    "cautionAltitudeM": 2500,
+    "dangerAscentRateMPerDay": 500,
+    "sleepAltitudeIncrementMaxM": 300
+  },
+  "lakeLouiseSymptoms": [
+    {"name": "Headache", "scores": ["None", "Mild", "Moderate", "Severe/incapacitating"]},
+    {"name": "GI symptoms", "scores": ["None", "Poor appetite/nausea", "Moderate nausea/vomiting", "Severe nausea/vomiting"]},
+    {"name": "Fatigue/weakness", "scores": ["None", "Mild", "Moderate", "Severe/incapacitating"]},
+    {"name": "Dizziness", "scores": ["None", "Mild", "Moderate", "Severe/incapacitating"]},
+    {"name": "Sleep difficulty", "scores": ["None", "Not as well as usual", "Woke many times", "Could not sleep at all"]}
+  ],
+  "scoring": {
+    "amsThreshold": 3,
+    "requiresHeadache": true,
+    "severeThreshold": 6
+  },
+  "recommendations": {
+    "safe": "Continue ascent. Stay hydrated.",
+    "caution": "Ascend slowly. Do not increase sleeping altitude by more than 300m/day above 3000m. Rest day every 3rd day.",
+    "danger": "STOP ascending. Descend if symptoms worsen. Consider descent of 500-1000m. Seek medical attention if available."
+  }
+}

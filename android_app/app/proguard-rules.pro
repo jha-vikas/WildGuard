@@ -1,0 +1,5 @@
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+-keep class com.wildguard.app.llm.plan.** { *; }
+-keep class com.wildguard.app.core.model.** { *; }
+-dontwarn okhttp3.**

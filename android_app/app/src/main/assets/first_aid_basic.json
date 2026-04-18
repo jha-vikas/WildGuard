@@ -1,0 +1,339 @@
+[
+  {
+    "id": "hypothermia",
+    "title": "Hypothermia",
+    "severity": "life-threatening",
+    "symptoms": ["Shivering", "Confusion", "Slurred speech", "Drowsiness", "Loss of coordination", "Weak pulse", "Shallow breathing"],
+    "steps": [
+      "Move to shelter, out of wind",
+      "Remove wet clothing",
+      "Insulate from ground (foam pad, branches, pack)",
+      "Warm core first: warm drinks (NOT alcohol), body-to-body contact",
+      "Do NOT rub extremities — rewarming too fast can cause cardiac arrest",
+      "If unconscious but breathing: recovery position, keep warm",
+      "If not breathing: CPR and evacuate immediately"
+    ],
+    "doNot": ["Do NOT give alcohol", "Do NOT rub or massage extremities", "Do NOT use direct heat on skin", "Do NOT let casualty walk if severely hypothermic"]
+  },
+  {
+    "id": "heat_stroke",
+    "title": "Heat Stroke",
+    "severity": "life-threatening",
+    "symptoms": ["Core temperature above 40°C/104°F", "Hot dry skin (sweating may stop)", "Confusion or altered mental status", "Rapid strong pulse", "Nausea/vomiting", "Seizures", "Loss of consciousness"],
+    "steps": [
+      "Call for emergency evacuation — this is a medical emergency",
+      "Move to shade or coolest available area",
+      "Remove excess clothing",
+      "Cool aggressively: douse with cold water, fan vigorously",
+      "Apply ice packs to neck, armpits, and groin",
+      "If conscious and able to swallow, give cool water in small sips",
+      "Monitor breathing — be ready for CPR",
+      "Continue cooling until body temperature drops below 39°C/102°F"
+    ],
+    "doNot": ["Do NOT give aspirin or acetaminophen", "Do NOT force fluids if unconscious", "Do NOT delay cooling to measure temperature"]
+  },
+  {
+    "id": "heat_exhaustion",
+    "title": "Heat Exhaustion",
+    "severity": "serious",
+    "symptoms": ["Heavy sweating", "Cool moist skin with goosebumps", "Faintness or dizziness", "Fatigue", "Weak rapid pulse", "Muscle cramps", "Nausea", "Headache"],
+    "steps": [
+      "Stop all activity and rest in cool shade",
+      "Lie down and elevate legs slightly",
+      "Remove excess clothing and loosen remaining clothing",
+      "Cool skin with wet cloths or fanning",
+      "Sip cool water or electrolyte drink slowly",
+      "If no improvement within 30 minutes, treat as heat stroke",
+      "Do not resume activity for the rest of the day"
+    ],
+    "doNot": ["Do NOT give salt tablets", "Do NOT resume activity even if feeling better", "Do NOT leave unmonitored — can progress to heat stroke"]
+  },
+  {
+    "id": "dehydration",
+    "title": "Dehydration",
+    "severity": "serious",
+    "symptoms": ["Thirst", "Dark yellow urine or reduced output", "Dry mouth and lips", "Headache", "Dizziness", "Fatigue", "Rapid heartbeat", "Sunken eyes"],
+    "steps": [
+      "Rest in shade and reduce activity",
+      "Sip water or oral rehydration solution frequently (small amounts)",
+      "If ORS unavailable: 1 liter water + 6 tsp sugar + ½ tsp salt",
+      "Avoid caffeine and alcohol",
+      "Eat salty snacks if available to replace electrolytes",
+      "Monitor urine color — aim for pale yellow",
+      "If unable to keep fluids down or symptoms worsen, evacuate for IV fluids"
+    ],
+    "doNot": ["Do NOT gulp large amounts at once — sip steadily", "Do NOT give caffeine or alcohol", "Do NOT ignore dark urine — it is an early warning sign"]
+  },
+  {
+    "id": "snake_bite",
+    "title": "Snake Bite",
+    "severity": "life-threatening",
+    "symptoms": ["Puncture marks at wound site", "Swelling and pain at bite", "Bruising around bite", "Nausea/vomiting", "Difficulty breathing", "Blurred vision", "Numbness or tingling"],
+    "steps": [
+      "Move away from the snake — do not attempt to catch or kill it",
+      "Keep victim calm and still to slow venom spread",
+      "Remove jewelry and tight clothing near bite before swelling",
+      "Immobilize bitten limb at or below heart level",
+      "Mark the edge of swelling with pen and note time",
+      "Photograph the snake if safely possible for identification",
+      "Evacuate to medical facility immediately — antivenom may be needed",
+      "Monitor for anaphylaxis"
+    ],
+    "doNot": ["Do NOT apply tourniquet", "Do NOT cut the wound or try to suck out venom", "Do NOT apply ice", "Do NOT give aspirin or ibuprofen (increases bleeding)", "Do NOT let victim walk if bite is on leg"]
+  },
+  {
+    "id": "fracture",
+    "title": "Bone Fracture",
+    "severity": "serious",
+    "symptoms": ["Intense pain at injury site", "Swelling and bruising", "Deformity or unnatural angle", "Inability to bear weight or use limb", "Grinding sensation", "Numbness below injury"],
+    "steps": [
+      "Do not move the injured limb unnecessarily",
+      "Check circulation below fracture: pulse, sensation, skin color",
+      "Splint the injury in the position found — immobilize joints above and below",
+      "Use padding between splint and skin",
+      "Apply cold pack wrapped in cloth to reduce swelling (20 min on, 20 off)",
+      "Elevate if possible without causing pain",
+      "Give pain relief if available (ibuprofen or acetaminophen)",
+      "Evacuate — all suspected fractures need X-ray"
+    ],
+    "doNot": ["Do NOT try to realign the bone", "Do NOT remove boots if ankle/foot fracture suspected (acts as splint)", "Do NOT apply heat"]
+  },
+  {
+    "id": "sprain",
+    "title": "Sprain (RICE Protocol)",
+    "severity": "moderate",
+    "symptoms": ["Pain that worsens with movement", "Swelling", "Bruising", "Limited range of motion", "Popping sensation at time of injury"],
+    "steps": [
+      "Rest — stop activity and protect the joint",
+      "Ice — apply cold pack for 20 minutes every 2 hours",
+      "Compression — wrap with elastic bandage (snug but not tight)",
+      "Elevation — raise injured area above heart level",
+      "Check toes/fingers for circulation (warmth, color, sensation)",
+      "Take ibuprofen for pain and inflammation",
+      "If unable to bear weight after 24 hours, suspect fracture and evacuate"
+    ],
+    "doNot": ["Do NOT apply heat in first 48 hours", "Do NOT wrap so tightly it cuts circulation", "Do NOT walk on severely sprained ankle without support"]
+  },
+  {
+    "id": "blister_care",
+    "title": "Blister Care",
+    "severity": "minor",
+    "symptoms": ["Red hot spot on skin", "Fluid-filled bubble", "Pain with pressure or friction", "Tenderness"],
+    "steps": [
+      "If unbroken and small: protect with moleskin donut or blister pad",
+      "If large and painful: sterilize a needle with alcohol or flame",
+      "Puncture at the edge, press fluid out gently, leave skin intact",
+      "Clean with antiseptic and apply antibiotic ointment",
+      "Cover with sterile gauze and secure with tape",
+      "Change dressing daily or when wet/dirty",
+      "Address the cause: adjust boots, add liner socks, reduce friction"
+    ],
+    "doNot": ["Do NOT tear off blister skin — it protects the wound", "Do NOT pop blisters if you lack sterile supplies", "Do NOT ignore hot spots — treat before blisters form"]
+  },
+  {
+    "id": "anaphylaxis",
+    "title": "Allergic Reaction / Anaphylaxis",
+    "severity": "life-threatening",
+    "symptoms": ["Swelling of face, lips, throat", "Difficulty breathing or wheezing", "Rapid weak pulse", "Skin rash or hives", "Nausea/vomiting", "Dizziness or fainting", "Feeling of impending doom"],
+    "steps": [
+      "Use epinephrine auto-injector (EpiPen) immediately if available — inject into outer thigh",
+      "Call for emergency evacuation",
+      "Lay person flat with legs elevated (unless breathing is difficult — then sit upright)",
+      "Remove the trigger if possible (e.g., remove stinger)",
+      "Give antihistamine (diphenhydramine/Benadryl) if able to swallow",
+      "Be prepared to give second EpiPen dose after 5-15 minutes if no improvement",
+      "Monitor airway — be ready for CPR",
+      "Even if symptoms improve, evacuate — biphasic reactions can occur hours later"
+    ],
+    "doNot": ["Do NOT delay epinephrine — antihistamines alone cannot stop anaphylaxis", "Do NOT let person stand or sit up suddenly", "Do NOT assume improvement means the danger is over"]
+  },
+  {
+    "id": "altitude_sickness",
+    "title": "Altitude Sickness (AMS)",
+    "severity": "serious",
+    "symptoms": ["Headache", "Nausea/vomiting", "Fatigue and weakness", "Dizziness", "Difficulty sleeping", "Loss of appetite", "Shortness of breath with exertion"],
+    "steps": [
+      "Stop ascending immediately",
+      "Rest at current altitude for at least 24 hours",
+      "Hydrate well and eat light, high-carbohydrate meals",
+      "Take acetazolamide (Diamox) if available: 125-250mg twice daily",
+      "Take ibuprofen or acetaminophen for headache",
+      "If symptoms worsen or do not improve in 24 hours: DESCEND at least 500-1000m",
+      "If signs of HACE (ataxia, confusion) or HAPE (breathlessness at rest, cough): descend immediately",
+      "Administer supplemental oxygen or use portable hyperbaric bag if available"
+    ],
+    "doNot": ["Do NOT continue ascending with symptoms", "Do NOT leave a symptomatic person alone", "Do NOT use sleeping pills — they can mask worsening symptoms", "Do NOT ignore ataxia (inability to walk heel-to-toe) — this signals HACE"]
+  },
+  {
+    "id": "lightning_position",
+    "title": "Lightning Safety & Strike",
+    "severity": "life-threatening",
+    "symptoms": ["Burns (entry and exit wounds)", "Cardiac arrest", "Confusion or amnesia", "Temporary blindness or deafness", "Muscle pain", "Ruptured eardrums"],
+    "steps": [
+      "PREVENTION: If thunder follows lightning by < 30 seconds, seek shelter immediately",
+      "Lightning position: crouch on balls of feet, heels together, head tucked, ears covered",
+      "If struck: check for pulse and breathing immediately",
+      "Begin CPR if no pulse — lightning victims can often be resuscitated",
+      "Treat burns with cool water and sterile dressings",
+      "Check for spinal injury before moving",
+      "Monitor for delayed cardiac arrhythmias — evacuate all strike victims",
+      "Triage: treat apparently dead first (unlike normal triage) — they may recover with CPR"
+    ],
+    "doNot": ["Do NOT shelter under isolated tall trees", "Do NOT lie flat on the ground", "Do NOT assume a lightning victim is dead — begin CPR immediately", "Do NOT hold metal objects during a storm"]
+  },
+  {
+    "id": "jellyfish_sting",
+    "title": "Jellyfish Sting",
+    "severity": "moderate",
+    "symptoms": ["Immediate burning pain", "Red welts or track marks", "Itching", "Swelling", "Nausea (severe stings)", "Muscle cramps", "Difficulty breathing (box jellyfish)"],
+    "steps": [
+      "Exit the water carefully",
+      "Rinse with vinegar (acetic acid) for at least 30 seconds to deactivate unfired stingers",
+      "If vinegar unavailable, rinse with sea water (NOT fresh water)",
+      "Remove visible tentacles with tweezers or gloved hand — never bare skin",
+      "Immerse in hot water (42-45°C/108-113°F) for 20-45 minutes for pain relief",
+      "Take antihistamine and pain medication as needed",
+      "For box jellyfish or Irukandji: call emergency services immediately",
+      "Monitor for allergic reaction"
+    ],
+    "doNot": ["Do NOT rinse with fresh water — triggers more stinging", "Do NOT urinate on the sting (myth, ineffective)", "Do NOT scrape with credit card (can trigger unfired stingers)", "Do NOT apply ice directly"]
+  },
+  {
+    "id": "coral_cuts",
+    "title": "Coral Cuts & Abrasions",
+    "severity": "moderate",
+    "symptoms": ["Laceration or scrape with embedded debris", "Red inflamed wound", "Delayed healing", "Secondary infection risk", "Pain and itching"],
+    "steps": [
+      "Clean wound thoroughly with clean fresh water and mild soap",
+      "Remove all coral fragments with tweezers and fine brush",
+      "Flush with diluted hydrogen peroxide or betadine solution",
+      "Apply thin layer of antibiotic ointment",
+      "Cover with non-stick sterile dressing",
+      "Change dressing twice daily and watch for infection signs",
+      "Coral cuts heal slowly — keep clean and dry between dressing changes",
+      "Seek medical attention if red streaking, pus, or fever develop"
+    ],
+    "doNot": ["Do NOT ignore small coral cuts — they commonly become infected", "Do NOT seal wound with butterfly strips (traps debris)", "Do NOT go back in the water until wound is sealed"]
+  },
+  {
+    "id": "bleeding_control",
+    "title": "Severe Bleeding Control",
+    "severity": "life-threatening",
+    "symptoms": ["Blood spurting or flowing steadily from wound", "Blood soaking through clothing", "Blood pooling on ground", "Pale or ashen skin", "Confusion or altered consciousness", "Rapid weak pulse"],
+    "steps": [
+      "Apply direct pressure with cleanest available cloth — press hard",
+      "If bleeding through pad, add more material on top — do not remove first pad",
+      "Elevate the wound above heart level if possible",
+      "For limb wounds not controlled by pressure: apply tourniquet 5-8cm above wound",
+      "Note time tourniquet applied — write on skin or tape",
+      "For junctional wounds (groin, armpit, neck): pack wound tightly with gauze and maintain pressure",
+      "Treat for shock: lay flat, elevate legs, keep warm",
+      "Evacuate urgently"
+    ],
+    "doNot": ["Do NOT remove a blood-soaked dressing — add on top", "Do NOT loosen or remove tourniquet once applied in field", "Do NOT use tourniquet on neck or torso wounds"]
+  },
+  {
+    "id": "burns",
+    "title": "Burns",
+    "severity": "serious",
+    "symptoms": ["Redness and pain (1st degree)", "Blistering (2nd degree)", "White or charred skin (3rd degree)", "Swelling", "Shock in severe burns"],
+    "steps": [
+      "Remove the source: extinguish flames, remove from heat, remove clothing unless stuck to burn",
+      "Cool burn with cool running water for 20 minutes (ideal) — NOT ice-cold",
+      "Remove jewelry and non-adhered clothing from burned area before swelling",
+      "Cover with clean non-stick dressing or cling film laid along (not wrapped around) the burn",
+      "For large burns: wrap in clean sheet, treat for shock, keep warm",
+      "Give pain relief and sip fluids if conscious",
+      "For chemical burns: brush off dry chemicals, then flush with copious water for 20+ minutes",
+      "Evacuate for burns larger than palm size, on face/hands/feet/genitals, or circumferential"
+    ],
+    "doNot": ["Do NOT apply butter, toothpaste, or creams", "Do NOT break blisters", "Do NOT use ice or ice water", "Do NOT remove clothing stuck to a burn", "Do NOT wrap cling film circumferentially"]
+  },
+  {
+    "id": "drowning_cpr",
+    "title": "Drowning / CPR",
+    "severity": "life-threatening",
+    "symptoms": ["Not breathing", "Unconscious in or near water", "Gasping or gurgling", "Cyanosis (blue skin)", "Foam at mouth or nose", "No pulse"],
+    "steps": [
+      "Ensure scene safety — do not become a second victim. Use reach/throw/row/go approach",
+      "Remove victim from water supporting head and neck (assume spinal injury if diving/surfing)",
+      "Check responsiveness: tap shoulders and shout",
+      "If not breathing: open airway (head-tilt chin-lift), give 5 rescue breaths",
+      "If no pulse: begin CPR — 30 compressions: 2 breaths at 100-120/min",
+      "Do NOT attempt abdominal thrusts to clear water from lungs",
+      "Use AED if available — dry chest first",
+      "Continue CPR until breathing resumes, help arrives, or you are physically unable",
+      "All near-drowning victims must be evacuated — delayed pulmonary edema can occur"
+    ],
+    "doNot": ["Do NOT enter dangerous water without flotation", "Do NOT attempt Heimlich to expel water", "Do NOT give up CPR early — cold-water drowning victims can recover after prolonged CPR"]
+  },
+  {
+    "id": "bee_sting",
+    "title": "Bee / Wasp Sting",
+    "severity": "moderate",
+    "symptoms": ["Immediate sharp pain", "Swelling at sting site", "Redness", "Itching", "In allergic individuals: hives, swelling away from sting, breathing difficulty"],
+    "steps": [
+      "Remove stinger quickly by scraping sideways with a flat edge (credit card, knife)",
+      "Wash area with soap and water",
+      "Apply cold pack for 10-15 minutes to reduce swelling",
+      "Take antihistamine (diphenhydramine/cetirizine) to reduce itching and swelling",
+      "Take ibuprofen or acetaminophen for pain",
+      "Apply hydrocortisone cream or calamine lotion if available",
+      "Watch for anaphylaxis signs for at least 30 minutes",
+      "If ANY systemic reaction: use EpiPen and evacuate (see Anaphylaxis protocol)"
+    ],
+    "doNot": ["Do NOT squeeze stinger with tweezers (forces more venom in)", "Do NOT scratch the sting", "Do NOT ignore systemic symptoms in anyone — first-time anaphylaxis is possible"]
+  },
+  {
+    "id": "tick_removal",
+    "title": "Tick Removal",
+    "severity": "moderate",
+    "symptoms": ["Tick attached to skin", "Redness around bite", "Bull's-eye rash (Lyme disease indicator)", "Fever or flu-like symptoms days later"],
+    "steps": [
+      "Use fine-tipped tweezers — grasp tick as close to skin surface as possible",
+      "Pull upward with steady, even pressure — do not twist or jerk",
+      "If mouthparts remain, try to remove with tweezers; if not, leave them and let skin heal",
+      "Clean bite area with rubbing alcohol or soap and water",
+      "Save the tick in a sealed container (tape it to paper or put in small bag with date)",
+      "Monitor for symptoms for 30 days: rash, fever, joint pain, fatigue",
+      "Seek medical attention if bull's-eye rash appears or flu-like symptoms develop",
+      "Document bite location and date"
+    ],
+    "doNot": ["Do NOT use petroleum jelly, nail polish, or heat to detach tick", "Do NOT crush tick with fingers (can spread pathogens)", "Do NOT twist or jerk when removing"]
+  },
+  {
+    "id": "eye_foreign_body",
+    "title": "Foreign Body in Eye",
+    "severity": "moderate",
+    "symptoms": ["Sensation of something in eye", "Tearing", "Redness", "Pain that worsens with blinking", "Blurred vision", "Light sensitivity"],
+    "steps": [
+      "Do NOT rub the eye",
+      "Wash hands before touching around eye",
+      "Try to flush with clean water or saline — tilt head so affected eye is down",
+      "Pull upper lid over lower lid — lashes may sweep particle out",
+      "If visible on white of eye: try to remove with moist corner of clean cloth",
+      "If under upper lid: look down, flip lid over cotton swab, remove if visible",
+      "If embedded or on cornea (colored part): do NOT attempt removal — patch and evacuate",
+      "After removal: artificial tears and monitor for 24 hours for infection signs"
+    ],
+    "doNot": ["Do NOT rub the eye", "Do NOT try to remove embedded objects", "Do NOT touch the cornea", "Do NOT use dirty water or cloths"]
+  },
+  {
+    "id": "dental_emergency",
+    "title": "Dental Emergency",
+    "severity": "moderate",
+    "symptoms": ["Broken or chipped tooth", "Knocked-out tooth", "Severe toothache", "Jaw pain", "Swelling of gums or face", "Bleeding from mouth"],
+    "steps": [
+      "KNOCKED-OUT TOOTH: Handle by crown only, never touch the root",
+      "Rinse gently with milk or saline — do not scrub",
+      "Attempt to reimplant in socket: bite gently on gauze to hold in place",
+      "If cannot reimplant: store in milk, saliva, or saline (NOT water)",
+      "Time critical — best if reimplanted within 30 minutes",
+      "BROKEN TOOTH: Rinse mouth with warm water, apply cold compress to face",
+      "TOOTHACHE: Rinse with warm salt water, take ibuprofen, apply clove oil if available",
+      "Cover sharp edges with dental wax, sugar-free gum, or candle wax to protect tongue/cheek",
+      "Seek dental care as soon as possible"
+    ],
+    "doNot": ["Do NOT handle knocked-out tooth by root", "Do NOT store tooth in plain water", "Do NOT apply aspirin directly to gums (causes chemical burn)", "Do NOT ignore dental infections — they can become systemic"]
+  }
+]

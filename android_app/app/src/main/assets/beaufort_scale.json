@@ -1,0 +1,15 @@
+[
+  {"level": 0, "name": "Calm", "speedMinKmh": 0, "speedMaxKmh": 1, "landDescription": "Smoke rises vertically", "seaDescription": "Sea like a mirror"},
+  {"level": 1, "name": "Light air", "speedMinKmh": 1, "speedMaxKmh": 5, "landDescription": "Smoke drifts, barely felt on face", "seaDescription": "Ripples, no foam crests"},
+  {"level": 2, "name": "Light breeze", "speedMinKmh": 6, "speedMaxKmh": 11, "landDescription": "Leaves rustle, feel wind on face", "seaDescription": "Small wavelets, crests glassy"},
+  {"level": 3, "name": "Gentle breeze", "speedMinKmh": 12, "speedMaxKmh": 19, "landDescription": "Leaves and small twigs move, flags extend", "seaDescription": "Large wavelets, crests begin to break"},
+  {"level": 4, "name": "Moderate breeze", "speedMinKmh": 20, "speedMaxKmh": 28, "landDescription": "Small branches move, raises dust and paper", "seaDescription": "Small waves, frequent whitecaps"},
+  {"level": 5, "name": "Fresh breeze", "speedMinKmh": 29, "speedMaxKmh": 38, "landDescription": "Small trees sway, whitecaps on lakes", "seaDescription": "Moderate waves, many whitecaps"},
+  {"level": 6, "name": "Strong breeze", "speedMinKmh": 39, "speedMaxKmh": 49, "landDescription": "Large branches move, umbrella difficult", "seaDescription": "Large waves, extensive whitecaps, spray"},
+  {"level": 7, "name": "Near gale", "speedMinKmh": 50, "speedMaxKmh": 61, "landDescription": "Whole trees sway, hard to walk against wind", "seaDescription": "Sea heaps up, foam blown in streaks"},
+  {"level": 8, "name": "Gale", "speedMinKmh": 62, "speedMaxKmh": 74, "landDescription": "Twigs break off trees, very hard to walk", "seaDescription": "Moderately high waves, crests break into spindrift"},
+  {"level": 9, "name": "Strong gale", "speedMinKmh": 75, "speedMaxKmh": 88, "landDescription": "Light structural damage, branches break", "seaDescription": "High waves, dense foam, spray reduces visibility"},
+  {"level": 10, "name": "Storm", "speedMinKmh": 89, "speedMaxKmh": 102, "landDescription": "Trees uprooted, structural damage", "seaDescription": "Very high waves, sea white with foam, visibility poor"},
+  {"level": 11, "name": "Violent storm", "speedMinKmh": 103, "speedMaxKmh": 117, "landDescription": "Widespread damage", "seaDescription": "Exceptionally high waves, visibility severely impaired"},
+  {"level": 12, "name": "Hurricane", "speedMinKmh": 118, "speedMaxKmh": 999, "landDescription": "Devastating damage", "seaDescription": "Air filled with spray, sea completely white"}
+]

@@ -1,0 +1,886 @@
+[
+  {
+    "id": "8443970",
+    "name": "Boston, MA",
+    "lat": 42.3548,
+    "lon": -71.0534,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.37, "phase": 113.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.21, "phase": 140.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.30, "phase": 94.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.14, "phase": 199.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.11, "phase": 186.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.06, "phase": 138.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.05, "phase": 196.1, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.04, "phase": 290.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8518750",
+    "name": "New York (The Battery), NY",
+    "lat": 40.7006,
+    "lon": -74.0142,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.67, "phase": 120.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.15, "phase": 149.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.15, "phase": 100.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.10, "phase": 193.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 180.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 147.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 190.5, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.06, "phase": 312.8, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8665530",
+    "name": "Charleston, SC",
+    "lat": 32.7816,
+    "lon": -79.9251,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.77, "phase": 4.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.11, "phase": 24.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.17, "phase": 345.1, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.12, "phase": 188.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.08, "phase": 191.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 22.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 185.2, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.03, "phase": 75.6, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8723214",
+    "name": "Miami (Virginia Key), FL",
+    "lat": 25.7314,
+    "lon": -80.1618,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.27, "phase": 340.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.06, "phase": 6.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.06, "phase": 318.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.09, "phase": 172.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 163.1, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.02, "phase": 4.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 169.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 245.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9414290",
+    "name": "San Francisco (Golden Gate), CA",
+    "lat": 37.8063,
+    "lon": -122.4659,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.57, "phase": 196.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.13, "phase": 218.4, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.13, "phase": 177.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.37, "phase": 220.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.23, "phase": 209.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 216.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.12, "phase": 217.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 110.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9447130",
+    "name": "Seattle, WA",
+    "lat": 47.6026,
+    "lon": -122.3393,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.07, "phase": 28.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.30, "phase": 52.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.22, "phase": 8.1, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.52, "phase": 278.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.32, "phase": 260.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.08, "phase": 50.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.17, "phase": 275.2, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 180.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9410170",
+    "name": "San Diego, CA",
+    "lat": 32.7142,
+    "lon": -117.1736,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.53, "phase": 188.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.16, "phase": 210.5, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.12, "phase": 168.9, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.33, "phase": 215.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.21, "phase": 204.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 208.1, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.11, "phase": 212.7, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 95.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "1612340",
+    "name": "Honolulu, HI",
+    "lat": 21.3067,
+    "lon": -157.8670,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.19, "phase": 56.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.09, "phase": 70.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.05, "phase": 38.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.16, "phase": 97.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.09, "phase": 72.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 68.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.05, "phase": 94.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.00, "phase": 0.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8771450",
+    "name": "Galveston (Pier 21), TX",
+    "lat": 29.3100,
+    "lon": -94.7933,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.15, "phase": 316.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.04, "phase": 342.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.03, "phase": 295.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.20, "phase": 16.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.17, "phase": 8.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.01, "phase": 340.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.07, "phase": 13.9, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 200.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8724580",
+    "name": "Key West, FL",
+    "lat": 24.5508,
+    "lon": -81.8078,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.18, "phase": 37.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.05, "phase": 60.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.04, "phase": 18.3, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.10, "phase": 178.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.07, "phase": 165.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.01, "phase": 58.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 175.3, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 130.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "UK0001",
+    "name": "London Bridge, UK",
+    "lat": 51.5074,
+    "lon": -0.0872,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 2.19, "phase": 149.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.65, "phase": 188.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.43, "phase": 130.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.12, "phase": 321.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.10, "phase": 340.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.18, "phase": 186.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 318.2, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.22, "phase": 48.6, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "UK0002",
+    "name": "Dover, UK",
+    "lat": 51.1140,
+    "lon": 1.3220,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 2.27, "phase": 331.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.71, "phase": 9.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.45, "phase": 311.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.08, "phase": 142.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.07, "phase": 155.2, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.19, "phase": 7.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 139.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.15, "phase": 118.4, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "UK0003",
+    "name": "Southampton, UK",
+    "lat": 50.8965,
+    "lon": -1.3963,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.49, "phase": 310.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.51, "phase": 350.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.31, "phase": 290.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.07, "phase": 110.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 128.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.14, "phase": 348.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 108.3, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.25, "phase": 155.2, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "UK0004",
+    "name": "Liverpool, UK",
+    "lat": 53.4084,
+    "lon": -2.9916,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 3.13, "phase": 315.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 1.00, "phase": 354.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.62, "phase": 296.3, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.11, "phase": 128.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.10, "phase": 140.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.27, "phase": 352.1, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 125.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.12, "phase": 204.8, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0001",
+    "name": "Amsterdam, Netherlands",
+    "lat": 52.3791,
+    "lon": 4.9003,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.64, "phase": 258.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.17, "phase": 310.5, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.12, "phase": 238.1, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.08, "phase": 62.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.07, "phase": 75.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 308.2, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 59.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.10, "phase": 175.6, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0002",
+    "name": "Brest, France",
+    "lat": 48.3825,
+    "lon": -4.4924,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 2.08, "phase": 120.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.74, "phase": 154.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.42, "phase": 101.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.06, "phase": 206.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.05, "phase": 218.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.20, "phase": 152.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 203.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.08, "phase": 300.4, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0003",
+    "name": "Lisbon, Portugal",
+    "lat": 38.7071,
+    "lon": -9.1364,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.08, "phase": 62.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.38, "phase": 88.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.23, "phase": 43.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.07, "phase": 52.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 322.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.10, "phase": 86.4, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 50.3, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.04, "phase": 180.2, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0004",
+    "name": "Bergen, Norway",
+    "lat": 60.3975,
+    "lon": 5.3221,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.42, "phase": 338.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.13, "phase": 14.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.09, "phase": 318.3, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.04, "phase": 172.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.03, "phase": 185.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 12.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.01, "phase": 170.2, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 260.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0001",
+    "name": "Tokyo, Japan",
+    "lat": 35.6528,
+    "lon": 139.7700,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.52, "phase": 180.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.22, "phase": 215.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.11, "phase": 160.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.24, "phase": 232.7, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.17, "phase": 218.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.06, "phase": 213.2, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.08, "phase": 229.4, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.03, "phase": 30.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0002",
+    "name": "Hong Kong, China",
+    "lat": 22.2855,
+    "lon": 114.2178,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.37, "phase": 222.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.14, "phase": 258.4, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.08, "phase": 203.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.31, "phase": 315.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.25, "phase": 295.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 256.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.10, "phase": 312.4, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 120.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0003",
+    "name": "Singapore",
+    "lat": 1.2644,
+    "lon": 103.8208,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.82, "phase": 134.7, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.35, "phase": 170.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.17, "phase": 115.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.29, "phase": 348.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.22, "phase": 330.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.10, "phase": 168.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.10, "phase": 345.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.05, "phase": 340.2, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0004",
+    "name": "Mumbai, India",
+    "lat": 18.9320,
+    "lon": 72.8498,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.55, "phase": 331.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.62, "phase": 8.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.33, "phase": 312.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.37, "phase": 62.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.18, "phase": 38.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.17, "phase": 6.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.12, "phase": 59.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.06, "phase": 270.8, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AU0001",
+    "name": "Sydney, Australia",
+    "lat": -33.8568,
+    "lon": 151.2153,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.50, "phase": 226.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.12, "phase": 258.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.11, "phase": 206.3, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.16, "phase": 22.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.10, "phase": 352.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 256.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.05, "phase": 19.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 108.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AU0002",
+    "name": "Melbourne, Australia",
+    "lat": -37.8483,
+    "lon": 144.9194,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.22, "phase": 295.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.11, "phase": 340.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.04, "phase": 275.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.14, "phase": 48.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.11, "phase": 16.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 338.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.05, "phase": 45.4, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 200.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AU0003",
+    "name": "Cairns, Australia",
+    "lat": -16.9256,
+    "lon": 145.7753,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.78, "phase": 122.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.23, "phase": 152.4, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.17, "phase": 103.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.27, "phase": 268.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.15, "phase": 242.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.06, "phase": 150.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.09, "phase": 265.5, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.03, "phase": 310.2, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "PC0001",
+    "name": "Auckland, New Zealand",
+    "lat": -36.8485,
+    "lon": 174.7633,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.08, "phase": 245.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.20, "phase": 276.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.23, "phase": 225.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.09, "phase": 54.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.05, "phase": 24.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 274.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 51.5, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 145.3, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "PC0002",
+    "name": "Suva, Fiji",
+    "lat": -18.1416,
+    "lon": 178.4419,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.52, "phase": 310.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.18, "phase": 345.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.11, "phase": 290.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.10, "phase": 82.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 55.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 343.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 79.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 260.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AF0001",
+    "name": "Cape Town, South Africa",
+    "lat": -33.9201,
+    "lon": 18.4312,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.51, "phase": 74.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.19, "phase": 102.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.11, "phase": 55.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.05, "phase": 195.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.04, "phase": 168.2, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 100.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 193.4, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 210.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "SA0001",
+    "name": "Buenos Aires, Argentina",
+    "lat": -34.5986,
+    "lon": -58.3728,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.32, "phase": 35.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.12, "phase": 65.4, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.07, "phase": 16.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.13, "phase": 295.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.10, "phase": 268.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 63.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 292.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 140.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "SA0002",
+    "name": "Rio de Janeiro, Brazil",
+    "lat": -22.8963,
+    "lon": -43.1700,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.31, "phase": 82.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.11, "phase": 110.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.07, "phase": 63.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.06, "phase": 182.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.05, "phase": 148.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 108.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 179.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 225.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "ME0001",
+    "name": "Dubai, UAE",
+    "lat": 25.2697,
+    "lon": 55.2962,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.38, "phase": 28.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.17, "phase": 62.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.08, "phase": 8.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.21, "phase": 325.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.13, "phase": 298.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 60.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.07, "phase": 322.5, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 100.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0005",
+    "name": "Colombo, Sri Lanka",
+    "lat": 6.9497,
+    "lon": 79.8428,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.22, "phase": 280.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.10, "phase": 315.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.05, "phase": 260.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.14, "phase": 42.6, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.09, "phase": 15.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 313.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.05, "phase": 39.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 180.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8454000",
+    "name": "Providence, RI",
+    "lat": 41.8064,
+    "lon": -71.4012,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.65, "phase": 103.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.12, "phase": 132.5, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.14, "phase": 84.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.08, "phase": 195.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.06, "phase": 183.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 130.2, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 192.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.05, "phase": 278.4, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8534720",
+    "name": "Atlantic City, NJ",
+    "lat": 39.3554,
+    "lon": -74.4180,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.59, "phase": 356.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.12, "phase": 25.4, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.13, "phase": 337.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.10, "phase": 190.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.07, "phase": 178.3, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 23.1, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 187.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.04, "phase": 48.6, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8575512",
+    "name": "Annapolis, MD",
+    "lat": 38.9834,
+    "lon": -76.4816,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.16, "phase": 62.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.02, "phase": 88.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.03, "phase": 42.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.06, "phase": 170.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.04, "phase": 157.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.01, "phase": 86.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 167.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 185.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8638610",
+    "name": "Norfolk (Sewells Point), VA",
+    "lat": 36.9466,
+    "lon": -76.3300,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.37, "phase": 347.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.06, "phase": 15.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.08, "phase": 327.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.10, "phase": 186.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.07, "phase": 172.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.02, "phase": 13.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.03, "phase": 183.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 340.2, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "8670870",
+    "name": "Savannah, GA",
+    "lat": 32.0809,
+    "lon": -81.0855,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.04, "phase": 8.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.15, "phase": 31.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.23, "phase": 349.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.12, "phase": 190.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.09, "phase": 193.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 29.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 187.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.05, "phase": 82.4, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9432780",
+    "name": "Juneau, AK",
+    "lat": 58.2990,
+    "lon": -134.4123,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 2.28, "phase": 312.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.61, "phase": 345.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.48, "phase": 293.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.46, "phase": 260.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.29, "phase": 244.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.17, "phase": 343.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.15, "phase": 257.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 250.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9451600",
+    "name": "Anchorage, AK",
+    "lat": 61.2381,
+    "lon": -149.8900,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 3.68, "phase": 334.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 1.04, "phase": 8.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.76, "phase": 314.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.59, "phase": 282.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.38, "phase": 266.2, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.28, "phase": 6.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.19, "phase": 279.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.08, "phase": 295.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "9455920",
+    "name": "Dutch Harbor, AK",
+    "lat": 53.8800,
+    "lon": -166.5400,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.40, "phase": 268.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.18, "phase": 300.2, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.08, "phase": 248.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.38, "phase": 242.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.24, "phase": 226.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 298.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.12, "phase": 239.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 180.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0005",
+    "name": "Barcelona, Spain",
+    "lat": 41.3851,
+    "lon": 2.1734,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.08, "phase": 195.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.04, "phase": 228.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.02, "phase": 176.2, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.04, "phase": 78.5, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.02, "phase": 52.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.01, "phase": 226.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.01, "phase": 75.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.00, "phase": 0.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0006",
+    "name": "Naples, Italy",
+    "lat": 40.8518,
+    "lon": 14.2681,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.10, "phase": 242.8, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.04, "phase": 275.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.02, "phase": 223.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.03, "phase": 95.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.02, "phase": 68.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.01, "phase": 273.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.01, "phase": 92.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.00, "phase": 0.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "EU0007",
+    "name": "Hamburg, Germany",
+    "lat": 53.5461,
+    "lon": 9.9663,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.48, "phase": 102.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.38, "phase": 142.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.29, "phase": 82.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.06, "phase": 338.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.05, "phase": 352.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.10, "phase": 140.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 335.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.18, "phase": 268.3, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0006",
+    "name": "Shanghai, China",
+    "lat": 31.2304,
+    "lon": 121.4737,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.52, "phase": 188.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.54, "phase": 222.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.32, "phase": 168.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.26, "phase": 315.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.21, "phase": 292.4, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.15, "phase": 220.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.09, "phase": 312.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.08, "phase": 42.5, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0007",
+    "name": "Busan, South Korea",
+    "lat": 35.1028,
+    "lon": 129.0403,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.42, "phase": 268.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.18, "phase": 302.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.09, "phase": 248.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.20, "phase": 232.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.15, "phase": 215.8, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.05, "phase": 300.2, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.07, "phase": 229.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 155.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0008",
+    "name": "Manila, Philippines",
+    "lat": 14.5876,
+    "lon": 120.9707,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.18, "phase": 155.2, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.10, "phase": 190.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.04, "phase": 135.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.32, "phase": 308.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.28, "phase": 286.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.03, "phase": 188.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.11, "phase": 305.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 340.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AS0009",
+    "name": "Bangkok, Thailand",
+    "lat": 13.7563,
+    "lon": 100.5018,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.12, "phase": 210.5, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.08, "phase": 248.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.03, "phase": 190.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.35, "phase": 342.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.26, "phase": 318.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.02, "phase": 246.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.12, "phase": 339.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 60.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AU0004",
+    "name": "Darwin, Australia",
+    "lat": -12.4634,
+    "lon": 130.8456,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.82, "phase": 272.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.95, "phase": 308.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.38, "phase": 252.8, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.56, "phase": 328.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.38, "phase": 302.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.26, "phase": 306.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.18, "phase": 325.4, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.04, "phase": 180.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AU0005",
+    "name": "Fremantle, Australia",
+    "lat": -32.0569,
+    "lon": 115.7481,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.18, "phase": 142.6, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.07, "phase": 175.3, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.04, "phase": 123.4, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.17, "phase": 46.8, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.11, "phase": 18.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.02, "phase": 173.0, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.06, "phase": 44.2, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 330.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "SA0003",
+    "name": "Valparaiso, Chile",
+    "lat": -33.0472,
+    "lon": -71.6127,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.48, "phase": 228.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.15, "phase": 260.7, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.10, "phase": 208.6, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.13, "phase": 315.2, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.09, "phase": 288.5, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.04, "phase": 258.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.04, "phase": 312.6, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.01, "phase": 100.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "AF0002",
+    "name": "Mombasa, Kenya",
+    "lat": -4.0435,
+    "lon": 39.6682,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 1.10, "phase": 168.3, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.45, "phase": 202.6, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.23, "phase": 148.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.22, "phase": 18.4, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.14, "phase": 348.7, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.12, "phase": 200.3, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.07, "phase": 15.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.02, "phase": 0.0, "speed": 57.9682084}
+    ]
+  },
+  {
+    "id": "PC0003",
+    "name": "Papeete, Tahiti",
+    "lat": -17.5334,
+    "lon": -149.5667,
+    "meanSeaLevel": 0.0,
+    "constituents": [
+      {"name": "M2", "amplitude": 0.12, "phase": 82.4, "speed": 28.9841042},
+      {"name": "S2", "amplitude": 0.06, "phase": 115.8, "speed": 30.0000000},
+      {"name": "N2", "amplitude": 0.03, "phase": 62.5, "speed": 28.4397295},
+      {"name": "K1", "amplitude": 0.06, "phase": 178.3, "speed": 15.0410686},
+      {"name": "O1", "amplitude": 0.04, "phase": 152.6, "speed": 13.9430356},
+      {"name": "K2", "amplitude": 0.02, "phase": 113.5, "speed": 30.0821373},
+      {"name": "P1", "amplitude": 0.02, "phase": 175.8, "speed": 14.9589314},
+      {"name": "M4", "amplitude": 0.00, "phase": 0.0, "speed": 57.9682084}
+    ]
+  }
+]
