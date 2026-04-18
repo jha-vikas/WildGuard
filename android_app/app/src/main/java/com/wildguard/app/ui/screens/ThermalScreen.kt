@@ -75,7 +75,10 @@ class ThermalViewModel(application: Application) : AndroidViewModel(application)
     private fun fetchOnlineConditions(lat: Double, lon: Double) {
         _state.value = _state.value.copy(onlineWeatherLoading = true)
         viewModelScope.launch {
-            val ow = WeatherApiClient.fetchCurrent(lat, lon)
+            val ow: OnlineWeather? = when (val r = WeatherApiClient.fetchCurrent(lat, lon)) {
+                is WeatherApiClient.Result.Success -> r.data
+                is WeatherApiClient.Result.Error   -> null
+            }
             if (ow != null) {
                 // Silently update check-in with online values so downstream calculations use them,
                 // but only if the user has NOT already recorded manual observations.

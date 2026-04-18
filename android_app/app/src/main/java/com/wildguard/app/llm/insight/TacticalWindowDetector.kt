@@ -14,6 +14,7 @@ import com.wildguard.app.modules.tide.TidalStation
 import com.wildguard.app.modules.tide.TidalStationRepository
 import com.wildguard.app.modules.uv.SunPositionCalculator
 import com.wildguard.app.modules.uv.UVIndexCalculator
+import com.wildguard.app.modules.weather.OnlineWeather
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -144,7 +145,8 @@ class TacticalWindowDetector(context: Context) {
         timeSeries: List<TimeSeriesPoint>,
         profile: ConstraintProfile,
         sensor: SensorState? = null,
-        seriesStartMs: Long = System.currentTimeMillis()
+        seriesStartMs: Long = System.currentTimeMillis(),
+        onlineWeather: OnlineWeather? = null
     ): String {
         val hasTide = timeSeries.any { it.tideHeight != null }
 
@@ -179,12 +181,19 @@ class TacticalWindowDetector(context: Context) {
         val pressureContext = sensor?.pressureHpa?.let { hpa ->
             "Current barometric pressure: ${"%.1f".format(hpa)} hPa."
         } ?: ""
+        val weatherContext = onlineWeather?.let {
+            "Current conditions: ${"%.0f".format(it.temperatureC)}°C " +
+                "(feels ${"%.0f".format(it.apparentTempC)}°C), " +
+                "${it.humidityPercent}% RH, wind ${"%.0f".format(it.windSpeedKmh)} km/h, " +
+                "${it.description}."
+        } ?: ""
 
         return PromptTemplates.TACTICAL_WINDOW_USER_TEMPLATE
             .replace("{LAT}", latStr)
             .replace("{LON}", lonStr)
             .replace("{DATE}", dateStr)
             .replace("{PRESSURE_CONTEXT}", pressureContext)
+            .replace("{WEATHER_CONTEXT}", weatherContext)
             .replace("{TIME_SERIES}", tsCompact)
             .replace("{CONSTRAINTS}", constraintStr)
     }
@@ -192,14 +201,15 @@ class TacticalWindowDetector(context: Context) {
     suspend fun detect(
         sensor: SensorState,
         profile: ConstraintProfile,
-        provider: LlmProvider
+        provider: LlmProvider,
+        onlineWeather: OnlineWeather? = null
     ): Result<TacticalDetectionResult> = try {
         val seriesStartMs = System.currentTimeMillis()
         val ts = generate24hTimeSeries(sensor, seriesStartMs)
         if (ts.isEmpty()) {
             Result.failure(Exception("No location data available"))
         } else {
-            val prompt = buildPrompt(ts, profile, sensor, seriesStartMs)
+            val prompt = buildPrompt(ts, profile, sensor, seriesStartMs, onlineWeather)
             val response = provider.generate(prompt, PromptTemplates.TACTICAL_WINDOW_SYSTEM)
 
             if (response.error != null) {

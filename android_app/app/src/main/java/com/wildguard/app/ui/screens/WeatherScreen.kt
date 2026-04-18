@@ -56,7 +56,9 @@ data class WeatherUiState(
     val lastUpdated: Long? = null,
     val windDirectionDeg: Double? = null,
     val onlineWeather: OnlineWeather? = null,
-    val onlineWeatherLoading: Boolean = false
+    val onlineWeatherLoading: Boolean = false,
+    val onlineWeatherError: String? = null,
+    val hasLocation: Boolean = false
 )
 
 // ── ViewModel ───────────────────────────────────────────────────────────────
@@ -78,9 +80,14 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                     pressureLogger.recordReading(pressure)
                     refreshState(pressure)
                 }
-                // Fetch online weather whenever location first becomes available or changes significantly.
                 val loc = sensor.location
-                if (loc != null && _uiState.value.onlineWeather == null && !_uiState.value.onlineWeatherLoading) {
+                _uiState.update { it.copy(hasLocation = loc != null) }
+                // Auto-fetch online weather when location first arrives.
+                if (loc != null &&
+                    _uiState.value.onlineWeather == null &&
+                    _uiState.value.onlineWeatherError == null &&
+                    !_uiState.value.onlineWeatherLoading
+                ) {
                     fetchOnlineWeather(loc.latitude, loc.longitude)
                 }
             }
@@ -88,15 +95,36 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun refreshOnlineWeather() {
-        val loc = sensorHub.state.value.location ?: return
+        val loc = sensorHub.state.value.location
+        if (loc == null) {
+            _uiState.update {
+                it.copy(onlineWeatherError = "No GPS fix yet — grant location permission and wait for a lock.")
+            }
+            return
+        }
         fetchOnlineWeather(loc.latitude, loc.longitude)
     }
 
     private fun fetchOnlineWeather(lat: Double, lon: Double) {
-        _uiState.update { it.copy(onlineWeatherLoading = true) }
+        _uiState.update { it.copy(onlineWeatherLoading = true, onlineWeatherError = null) }
         viewModelScope.launch {
-            val result = WeatherApiClient.fetchCurrent(lat, lon)
-            _uiState.update { it.copy(onlineWeather = result, onlineWeatherLoading = false) }
+            when (val r = WeatherApiClient.fetchCurrent(lat, lon)) {
+                is WeatherApiClient.Result.Success ->
+                    _uiState.update {
+                        it.copy(
+                            onlineWeather = r.data,
+                            onlineWeatherLoading = false,
+                            onlineWeatherError = null
+                        )
+                    }
+                is WeatherApiClient.Result.Error ->
+                    _uiState.update {
+                        it.copy(
+                            onlineWeatherLoading = false,
+                            onlineWeatherError = r.reason
+                        )
+                    }
+            }
         }
     }
 
@@ -144,13 +172,21 @@ fun WeatherScreen(navController: NavController, vm: WeatherViewModel = viewModel
         ) {
             Spacer(Modifier.height(4.dp))
 
-            // Online conditions card (Open-Meteo, no key required)
+            // Online conditions card (Open-Meteo, no key required) — always render a state
             when {
                 state.onlineWeatherLoading -> OnlineWeatherLoading()
                 state.onlineWeather != null -> OnlineWeatherCard(
                     weather = state.onlineWeather!!,
                     onRefresh = { vm.refreshOnlineWeather() }
                 )
+                state.onlineWeatherError != null -> OnlineWeatherError(
+                    reason = state.onlineWeatherError!!,
+                    onRetry = { vm.refreshOnlineWeather() }
+                )
+                !state.hasLocation -> OnlineWeatherWaiting(
+                    onRetry = { vm.refreshOnlineWeather() }
+                )
+                else -> OnlineWeatherLoading()
             }
 
             // Storm alert banner
@@ -228,6 +264,60 @@ private fun OnlineWeatherLoading() {
             CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
             Text("Fetching online conditions…", style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+        }
+    }
+}
+
+@Composable
+private fun OnlineWeatherWaiting(onRetry: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.Warning, "Location", tint = WildAmber,
+                modifier = Modifier.size(20.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Waiting for GPS lock", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Online conditions will load once location is available.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                )
+            }
+            TextButton(onClick = onRetry) { Text("Retry") }
+        }
+    }
+}
+
+@Composable
+private fun OnlineWeatherError(reason: String, onRetry: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = WildRed.copy(alpha = 0.12f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.Warning, "Error", tint = WildRed,
+                modifier = Modifier.size(20.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Online conditions unavailable",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold)
+                Text(
+                    reason,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+            TextButton(onClick = onRetry) { Text("Retry") }
         }
     }
 }

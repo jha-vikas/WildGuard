@@ -1,5 +1,6 @@
 package com.wildguard.app.modules.weather
 
+import android.util.Log
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,45 +26,72 @@ object WeatherApiClient {
         .readTimeout(10, TimeUnit.SECONDS)
         .build()
 
+    sealed class Result {
+        data class Success(val data: OnlineWeather) : Result()
+        data class Error(val reason: String) : Result()
+    }
+
     /**
      * Fetches current conditions from Open-Meteo (free, no API key required).
-     * Returns null on any network or parse error — callers must degrade gracefully.
+     * Returns a [Result] so callers can surface failures (HTTP errors, offline, parse issues).
      */
-    suspend fun fetchCurrent(lat: Double, lon: Double): OnlineWeather? =
+    suspend fun fetchCurrent(lat: Double, lon: Double): Result =
         withContext(Dispatchers.IO) {
-            try {
-                val url = "https://api.open-meteo.com/v1/forecast" +
-                    "?latitude=${"%.4f".format(lat)}" +
-                    "&longitude=${"%.4f".format(lon)}" +
-                    "&current=temperature_2m,apparent_temperature," +
-                    "relative_humidity_2m,wind_speed_10m,wind_direction_10m," +
-                    "surface_pressure,weather_code" +
-                    "&timezone=auto&forecast_days=1"
+            val url = "https://api.open-meteo.com/v1/forecast" +
+                "?latitude=${"%.4f".format(lat)}" +
+                "&longitude=${"%.4f".format(lon)}" +
+                "&current=temperature_2m,apparent_temperature," +
+                "relative_humidity_2m,wind_speed_10m,wind_direction_10m," +
+                "surface_pressure,weather_code" +
+                "&timezone=auto&forecast_days=1"
 
+            try {
+                Log.d(TAG, "Fetching: $url")
                 val request = Request.Builder().url(url).build()
                 val response = client.newCall(request).execute()
-                if (!response.isSuccessful) return@withContext null
+                val httpCode = response.code
+                val successful = response.isSuccessful
+                val body: String = try {
+                    if (successful) response.body?.string().orEmpty() else ""
+                } finally {
+                    response.close()
+                }
+                if (!successful) {
+                    val msg = "HTTP $httpCode"
+                    Log.w(TAG, "Fetch failed: $msg")
+                    return@withContext Result.Error(msg)
+                }
+                if (body.isEmpty()) return@withContext Result.Error("Empty response body")
 
-                val body = response.body?.string() ?: return@withContext null
                 val cur = JsonParser.parseString(body)
                     .asJsonObject
-                    .getAsJsonObject("current") ?: return@withContext null
+                    .getAsJsonObject("current")
+                    ?: return@withContext Result.Error("Malformed JSON (no 'current')")
+
+                val temp = cur.get("temperature_2m")?.asDouble
+                    ?: return@withContext Result.Error("Missing temperature_2m")
 
                 val code = cur.get("weather_code")?.asInt ?: 0
+                Log.d(TAG, "Fetch OK: ${temp}°C, code=$code")
 
-                OnlineWeather(
-                    temperatureC    = cur.get("temperature_2m")?.asDouble ?: return@withContext null,
-                    apparentTempC   = cur.get("apparent_temperature")?.asDouble ?: 0.0,
-                    humidityPercent = cur.get("relative_humidity_2m")?.asInt ?: 0,
-                    windSpeedKmh    = cur.get("wind_speed_10m")?.asDouble ?: 0.0,
-                    windDirectionDeg = cur.get("wind_direction_10m")?.asDouble ?: 0.0,
-                    pressureHpa     = cur.get("surface_pressure")?.asDouble ?: 0.0,
-                    description     = wmoDescription(code)
+                Result.Success(
+                    OnlineWeather(
+                        temperatureC     = temp,
+                        apparentTempC    = cur.get("apparent_temperature")?.asDouble ?: 0.0,
+                        humidityPercent  = cur.get("relative_humidity_2m")?.asInt ?: 0,
+                        windSpeedKmh     = cur.get("wind_speed_10m")?.asDouble ?: 0.0,
+                        windDirectionDeg = cur.get("wind_direction_10m")?.asDouble ?: 0.0,
+                        pressureHpa      = cur.get("surface_pressure")?.asDouble ?: 0.0,
+                        description      = wmoDescription(code)
+                    )
                 )
-            } catch (_: Exception) {
-                null
+            } catch (e: Exception) {
+                Log.e(TAG, "Fetch exception", e)
+                Result.Error(e.javaClass.simpleName + ": " + (e.message ?: "network error"))
             }
         }
+
+    private const val TAG = "WeatherApiClient"
 
     private fun wmoDescription(code: Int): String = when (code) {
         0            -> "Clear sky"

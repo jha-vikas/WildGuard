@@ -104,7 +104,7 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
     private val driftAnalyzer = DriftAnalyzer()
     private val celestialFinder = CelestialAlignmentFinder()
     private val consistencyChecker = SensorConsistencyChecker()
-    private val bindingPlanner = BindingConstraintPlanner()
+    private val bindingPlanner = BindingConstraintPlanner(application)
     private val sensorHub = WildGuardApp.instance.sensorHub
     private val settingsPrefs = application.getSharedPreferences("wildguard_settings", Context.MODE_PRIVATE)
 
@@ -255,7 +255,18 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val defaultProfile = tacticalDetector.loadConstraintProfiles().firstOrNull()
                 ?: ConstraintProfile(name = "default", maxUV = 8.0, minSunElDeg = 5.0)
-            tacticalDetector.detect(currentSensor, defaultProfile, provider)
+
+            // Fetch live weather so tactical windows factor in real temperature /
+            // humidity / wind, not just UV, sun, and tide.
+            val tacticalWeather = currentSensor.location?.let { loc ->
+                when (val r = com.wildguard.app.modules.weather.WeatherApiClient
+                    .fetchCurrent(loc.latitude, loc.longitude)) {
+                    is com.wildguard.app.modules.weather.WeatherApiClient.Result.Success -> r.data
+                    is com.wildguard.app.modules.weather.WeatherApiClient.Result.Error   -> null
+                }
+            }
+
+            tacticalDetector.detect(currentSensor, defaultProfile, provider, tacticalWeather)
                 .onSuccess {
                     _state.value = _state.value.copy(
                         tacticalWindows = it.windows,
@@ -307,7 +318,27 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
 
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            bindingPlanner.analyze(legs, startMs, loc.latitude, loc.longitude, provider).onSuccess {
+            // Fetch online weather so the LLM has real-time temperature / humidity / wind.
+            val online = when (val r =
+                com.wildguard.app.modules.weather.WeatherApiClient.fetchCurrent(loc.latitude, loc.longitude)
+            ) {
+                is com.wildguard.app.modules.weather.WeatherApiClient.Result.Success -> r.data
+                is com.wildguard.app.modules.weather.WeatherApiClient.Result.Error   -> null
+            }
+            // Reuse the active tactical-windows constraint profile (tide/UV rules, if any).
+            val profile = tacticalDetector.loadConstraintProfiles().firstOrNull()
+
+            bindingPlanner.analyze(
+                legs = legs,
+                startMs = startMs,
+                lat = loc.latitude,
+                lon = loc.longitude,
+                provider = provider,
+                altitudeM = loc.altitudeGps ?: 0.0,
+                sensor = currentSensor,
+                onlineWeather = online,
+                profile = profile
+            ).onSuccess {
                 _state.value = _state.value.copy(bindingAnalysis = it)
             }.onFailure {
                 _state.value = _state.value.copy(errorMessage = it.message)

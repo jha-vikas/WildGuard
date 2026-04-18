@@ -16,8 +16,10 @@ object PromptTemplates {
     val TACTICAL_WINDOW_USER_TEMPLATE = """
         Location: {LAT}°, {LON}° — {DATE}
         {PRESSURE_CONTEXT}
-        Use your knowledge of typical climate, temperature range, and weather patterns for this location and season.
-        Factor temperature and humidity into comfort/risk constraints even if not in the sensor series.
+        {WEATHER_CONTEXT}
+        Use your knowledge of typical climate, temperature range, humidity, and seasonal
+        weather patterns for this location and date. Combine that with the live conditions
+        above (when present) to estimate temperature, humidity, and wind across the next 24h.
 
         24h sensor forecast (15-min intervals, format: localHour|UV|sunAz|sunEl[|tide]):
         {TIME_SERIES}
@@ -25,6 +27,10 @@ object PromptTemplates {
         {CONSTRAINTS}
 
         Identify all windows where constraints are simultaneously satisfied.
+        Consider ALL factors — UV, sun elevation, sun bearing, tide level & direction
+        (when provided), temperature, humidity, and wind — not just UV. A hot-exposed
+        midday window, a coastal slot at/near high tide, or a window walking into low sun
+        are all valid binding constraints.
         Rank by quality. Note the binding constraint that limits each window.
         Return JSON array only.
     """.trimIndent()
@@ -114,11 +120,21 @@ object PromptTemplates {
     """.trimIndent()
 
     val BINDING_CONSTRAINT_USER_TEMPLATE = """
+        Location: {LAT}°, {LON}° — start {DATE}
+        {PRESSURE_CONTEXT}
+        {WEATHER_CONTEXT}
+        Use your knowledge of typical climate, temperature, humidity, and seasonal
+        weather for this location and date. Factor in tide state (where present),
+        heat/cold stress, wind, and humidity alongside the per-leg UV and sun data.
+
         Multi-leg trip ({LEG_COUNT} legs) with environmental overlay:
 
         {TIMELINE}
 
         Identify: which leg is the binding constraint on the overall schedule?
+        Consider ALL factors — UV, sun elevation, sun bearing, tide level & direction,
+        temperature, humidity, and wind — not just UV. A coastal leg at/near high tide,
+        a hot-exposed midday leg, or a leg walking into sun are all valid binding constraints.
         What cascade effects does it create for other legs?
         Propose a restructured leg sequence that minimizes total violations.
         Explain tradeoffs of the new sequence.
