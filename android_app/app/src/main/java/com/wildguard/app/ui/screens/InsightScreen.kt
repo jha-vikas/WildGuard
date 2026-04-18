@@ -485,7 +485,8 @@ private fun TacticalWindowsCard(windows: List<TacticalWindow>, seriesStartMs: Lo
     LlmCard {
         Text("Tactical Windows", style = MaterialTheme.typography.titleSmall)
         Text(
-            "Best time blocks where conditions align. Color = quality: green good, amber constrained, red poor.",
+            "Daylight split into blocks. Tap a row for the binding constraint and tradeoffs. " +
+                "Color = quality: green go, amber caution, red avoid.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
         )
@@ -545,11 +546,23 @@ private fun TacticalWindowsCard(windows: List<TacticalWindow>, seriesStartMs: Lo
 
             Spacer(Modifier.height(10.dp))
 
-            // ── Window list with actual clock times ───────────────────
-            windows.take(3).forEachIndexed { index, w ->
+            // ── Window list, chronological, all blocks shown ──────────
+            val orderedWindows = windows.sortedBy { it.startMs }
+            orderedWindows.forEachIndexed { index, w ->
                 if (index > 0) {
-                    Spacer(Modifier.height(6.dp))
+                    Divider(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    )
                 }
+
+                val tier = when {
+                    w.qualityScore > 0.7 -> Triple("Go",      WildGreen, "conditions align")
+                    w.qualityScore > 0.4 -> Triple("Caution", WildAmber, "partial constraints")
+                    else                 -> Triple("Avoid",   WildRed,   "significant risk")
+                }
+                val (tierLabel, tierColor, tierHint) = tier
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -560,46 +573,54 @@ private fun TacticalWindowsCard(windows: List<TacticalWindow>, seriesStartMs: Lo
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            "${timeSdf.format(Date(w.startMs)).lowercase()} – ${timeSdf.format(Date(w.endMs)).lowercase()}",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium
-                        )
-                        val qualityLabel = when {
-                            w.qualityScore > 0.7 -> "good"
-                            w.qualityScore > 0.4 -> "fair"
-                            else -> "poor"
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(tierColor, shape = CircleShape)
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                "${timeSdf.format(Date(w.startMs)).lowercase()} – " +
+                                    timeSdf.format(Date(w.endMs)).lowercase(),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium
+                            )
                         }
-                        val qualityColor = when {
-                            w.qualityScore > 0.7 -> WildGreen
-                            w.qualityScore > 0.4 -> WildAmber
-                            else -> WildRed
-                        }
                         Text(
-                            "${"%.0f".format(w.qualityScore * 100)}% · $qualityLabel",
+                            "$tierLabel · ${"%.0f".format(w.qualityScore * 100)}%",
                             style = MaterialTheme.typography.labelSmall,
-                            color = qualityColor
+                            color = tierColor,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
+
+                    Text(
+                        tierHint,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
+                        modifier = Modifier.padding(start = 14.dp, top = 1.dp)
+                    )
+
                     if (w.bindingConstraint.isNotBlank()) {
                         Text(
-                            w.bindingConstraint,
+                            "Why: ${w.bindingConstraint}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 2.dp)
+                                .padding(start = 14.dp, top = 3.dp)
                         )
                     }
                     if (w.tradeoffs.isNotBlank()) {
                         Text(
-                            w.tradeoffs,
+                            "Tradeoff: ${w.tradeoffs}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
                             fontStyle = FontStyle.Italic,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 1.dp)
+                                .padding(start = 14.dp, top = 1.dp)
                         )
                     }
                 }

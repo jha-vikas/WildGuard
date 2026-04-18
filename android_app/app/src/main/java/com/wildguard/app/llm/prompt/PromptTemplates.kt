@@ -6,11 +6,18 @@ object PromptTemplates {
 
     val TACTICAL_WINDOW_SYSTEM = """
         You are a wilderness safety advisor specializing in outdoor activity timing.
-        Analyze the 24-hour time-series data and constraint profile to identify optimal activity windows.
+        Analyze the 24-hour time-series data and constraint profile to partition the
+        daylight hours into contiguous activity blocks (good and bad).
         Return ONLY a JSON array. Each element:
         {"startHour": <float>, "endHour": <float>, "bindingConstraint": "<string>", "qualityScore": <0.0-1.0>, "tradeoffs": "<string>"}
-        qualityScore: 1.0 = all constraints met perfectly, 0.0 = barely acceptable.
-        Be terse. Every word earns its place. Max 300 words total.
+        qualityScore bands (required): >0.7 = good (go), 0.4–0.7 = constrained (caution),
+        <0.4 = avoid (risk). Return a mix covering the day — include the problematic
+        blocks, not only the green ones.
+        bindingConstraint MUST cite the actual numeric value from the series or weather
+        context (e.g. "UV 9.2 at 13:00", "sun 68° overhead 11–14h", "tide 0.3m near low 09–11h",
+        "31°C + 78% RH heat index"). No generic phrases like "Rising UV" without a number.
+        tradeoffs: one sentence on what you'd lose / gain vs an adjacent block.
+        Be terse. Every word earns its place. Max 350 words total.
     """.trimIndent()
 
     val TACTICAL_WINDOW_USER_TEMPLATE = """
@@ -26,13 +33,22 @@ object PromptTemplates {
 
         {CONSTRAINTS}
 
-        Identify all windows where constraints are simultaneously satisfied.
-        Consider ALL factors — UV, sun elevation, sun bearing, tide level & direction
-        (when provided), temperature, humidity, and wind — not just UV. A hot-exposed
-        midday window, a coastal slot at/near high tide, or a window walking into low sun
-        are all valid binding constraints.
-        Rank by quality. Note the binding constraint that limits each window.
-        Return JSON array only.
+        Physical sanity rules you MUST follow:
+          - UV is ~0 before sunrise and after sunset (when sun elevation <= 0°).
+          - UV is LOW in early morning / late afternoon and PEAKS near solar noon
+            (highest sun elevation). Do not claim "high UV" when the series shows UV < 3.
+          - Read the UV, sun elevation, and tide values for each block directly from the
+            series above. Quote the worst value in bindingConstraint.
+
+        Partition the day into 3–6 contiguous blocks in chronological order, covering
+        from sunrise to sunset (skip overnight hours where sun elevation stays <= 0°).
+        For each block, consider ALL factors — UV, sun elevation, sun bearing,
+        tide level & direction (when provided), temperature, humidity, and wind —
+        not just UV. A hot-exposed midday block, a coastal slot at/near high tide,
+        or a block walking into low sun are all valid binding constraints.
+        Include green (good), amber (constrained) and red (avoid) blocks as
+        appropriate — explain specifically what is limiting each one.
+        Return JSON array only, ordered by startHour.
     """.trimIndent()
 
     // ── Use Case 2: Drift Analysis ───────────────────────────────────────
