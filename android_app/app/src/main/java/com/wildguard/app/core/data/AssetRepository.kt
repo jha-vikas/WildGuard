@@ -7,7 +7,8 @@ import java.io.InputStreamReader
 
 class AssetRepository(private val context: Context) {
 
-    private val gson = Gson()
+    @PublishedApi
+    internal val gson = Gson()git 
 
     fun readJsonString(filename: String): String {
         return context.assets.open(filename).bufferedReader().use { it.readText() }
