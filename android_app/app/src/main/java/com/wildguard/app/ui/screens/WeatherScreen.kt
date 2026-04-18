@@ -54,7 +54,9 @@ data class WeatherUiState(
     val stormAlert: StormAlert? = null,
     val pressureHistory: List<PressureReading> = emptyList(),
     val lastUpdated: Long? = null,
-    val windDirectionDeg: Double? = null
+    val windDirectionDeg: Double? = null,
+    val onlineWeather: OnlineWeather? = null,
+    val onlineWeatherLoading: Boolean = false
 )
 
 // ── ViewModel ───────────────────────────────────────────────────────────────
@@ -76,7 +78,25 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                     pressureLogger.recordReading(pressure)
                     refreshState(pressure)
                 }
+                // Fetch online weather whenever location first becomes available or changes significantly.
+                val loc = sensor.location
+                if (loc != null && _uiState.value.onlineWeather == null && !_uiState.value.onlineWeatherLoading) {
+                    fetchOnlineWeather(loc.latitude, loc.longitude)
+                }
             }
+        }
+    }
+
+    fun refreshOnlineWeather() {
+        val loc = sensorHub.state.value.location ?: return
+        fetchOnlineWeather(loc.latitude, loc.longitude)
+    }
+
+    private fun fetchOnlineWeather(lat: Double, lon: Double) {
+        _uiState.update { it.copy(onlineWeatherLoading = true) }
+        viewModelScope.launch {
+            val result = WeatherApiClient.fetchCurrent(lat, lon)
+            _uiState.update { it.copy(onlineWeather = result, onlineWeatherLoading = false) }
         }
     }
 
@@ -124,17 +144,28 @@ fun WeatherScreen(navController: NavController, vm: WeatherViewModel = viewModel
         ) {
             Spacer(Modifier.height(4.dp))
 
+            // Online conditions card (Open-Meteo, no key required)
+            when {
+                state.onlineWeatherLoading -> OnlineWeatherLoading()
+                state.onlineWeather != null -> OnlineWeatherCard(
+                    weather = state.onlineWeather!!,
+                    onRefresh = { vm.refreshOnlineWeather() }
+                )
+            }
+
             // Storm alert banner
             state.stormAlert?.let { alert ->
                 StormAlertBanner(alert)
             }
 
-            // Current pressure
+            // Current pressure (from barometer)
             PressureCard(state)
 
-            // Zambretti forecast
-            state.forecast?.let { fc ->
-                ForecastCard(fc)
+            // Zambretti forecast (needs ~1h of pressure history)
+            if (state.forecast != null) {
+                ForecastCard(state.forecast!!)
+            } else if (state.pressureHistory.size < 3) {
+                BarometerWarmupNote()
             }
 
             // 24-hour pressure chart
@@ -178,6 +209,132 @@ fun WeatherScreen(navController: NavController, vm: WeatherViewModel = viewModel
             },
             onDismiss = { showWindPicker = false }
         )
+    }
+}
+
+// ── Online weather components ───────────────────────────────────────────────
+
+@Composable
+private fun OnlineWeatherLoading() {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+            Text("Fetching online conditions…", style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+        }
+    }
+}
+
+@Composable
+private fun OnlineWeatherCard(weather: OnlineWeather, onRefresh: () -> Unit) {
+    val fmt = SimpleDateFormat("HH:mm", Locale.getDefault())
+    Card(
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Online Conditions",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                    )
+                    Text(
+                        text = "via Open-Meteo · ${fmt.format(java.util.Date(weather.fetchedAt))}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f)
+                    )
+                }
+                TextButton(onClick = onRefresh, contentPadding = PaddingValues(4.dp)) {
+                    Text("Refresh", style = MaterialTheme.typography.labelMedium)
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        "${"%.0f".format(weather.temperatureC)}°C",
+                        style = MaterialTheme.typography.displaySmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "Feels ${"%+.0f".format(weather.apparentTempC)}°C",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(weather.description, style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "${weather.humidityPercent}% RH",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                LabelValue("Wind", "${"%.0f".format(weather.windSpeedKmh)} km/h ${degToCompass(weather.windDirectionDeg).substringBefore(" ")}")
+                LabelValue("Pressure", "${"%.0f".format(weather.pressureHpa)} hPa")
+            }
+        }
+    }
+}
+
+@Composable
+private fun LabelValue(label: String, value: String) {
+    Column {
+        Text(label, style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f))
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+private fun BarometerWarmupNote() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(
+                Icons.Default.Warning, "Info",
+                tint = WildAmber,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                "Barometric forecast becomes available after ~1 hour of pressure readings.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+        }
     }
 }
 

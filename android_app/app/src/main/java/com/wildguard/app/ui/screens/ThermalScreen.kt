@@ -21,6 +21,8 @@ import com.wildguard.app.WildGuardApp
 import com.wildguard.app.core.model.UserObservations
 import com.wildguard.app.modules.conditions.ConditionsCheckIn
 import com.wildguard.app.modules.thermal.*
+import com.wildguard.app.modules.weather.WeatherApiClient
+import com.wildguard.app.modules.weather.OnlineWeather
 import com.wildguard.app.ui.Routes
 import com.wildguard.app.ui.theme.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,12 +37,15 @@ data class ThermalUiState(
     val wbgt: WBGTResult? = null,
     val hydration: HydrationResult? = null,
     val hasObservations: Boolean = false,
-    val isStale: Boolean = false
+    val isStale: Boolean = false,
+    val onlineWeather: OnlineWeather? = null,
+    val onlineWeatherLoading: Boolean = false
 )
 
 class ThermalViewModel(application: Application) : AndroidViewModel(application) {
 
     private val conditionsCheckIn = ConditionsCheckIn(application)
+    private val sensorHub = WildGuardApp.instance.sensorHub
 
     private val _state = MutableStateFlow(ThermalUiState())
     val state: StateFlow<ThermalUiState> = _state.asStateFlow()
@@ -50,6 +55,43 @@ class ThermalViewModel(application: Application) : AndroidViewModel(application)
             conditionsCheckIn.observations.collect { obs ->
                 recalculate(obs)
             }
+        }
+        // Attempt to auto-populate from the internet whenever GPS becomes available.
+        viewModelScope.launch {
+            sensorHub.state.collect { sensor ->
+                val loc = sensor.location ?: return@collect
+                if (_state.value.onlineWeather == null && !_state.value.onlineWeatherLoading) {
+                    fetchOnlineConditions(loc.latitude, loc.longitude)
+                }
+            }
+        }
+    }
+
+    fun refreshOnlineConditions() {
+        val loc = sensorHub.state.value.location ?: return
+        fetchOnlineConditions(loc.latitude, loc.longitude)
+    }
+
+    private fun fetchOnlineConditions(lat: Double, lon: Double) {
+        _state.value = _state.value.copy(onlineWeatherLoading = true)
+        viewModelScope.launch {
+            val ow = WeatherApiClient.fetchCurrent(lat, lon)
+            if (ow != null) {
+                // Silently update check-in with online values so downstream calculations use them,
+                // but only if the user has NOT already recorded manual observations.
+                val existing = conditionsCheckIn.observations.value
+                if (existing.temperatureC == null) {
+                    conditionsCheckIn.update(
+                        existing.copy(
+                            temperatureC    = ow.temperatureC,
+                            humidityPercent = ow.humidityPercent.toDouble(),
+                            windSpeedKmh    = ow.windSpeedKmh,
+                            observedAt      = System.currentTimeMillis()
+                        )
+                    )
+                }
+            }
+            _state.value = _state.value.copy(onlineWeather = ow, onlineWeatherLoading = false)
         }
     }
 
@@ -101,10 +143,20 @@ fun ThermalScreen(navController: NavController, vm: ThermalViewModel = viewModel
         ) {
             Spacer(Modifier.height(4.dp))
 
+            // Loading indicator while fetching online data
+            if (state.onlineWeatherLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
             if (!state.hasObservations) {
-                NoObservationsCard { navController.navigate(Routes.CONDITIONS) }
+                if (!state.onlineWeatherLoading) {
+                    NoObservationsCard { navController.navigate(Routes.CONDITIONS) }
+                }
             } else {
-                if (state.isStale) {
+                // Show source banner when auto-populated from internet
+                if (state.onlineWeather != null) {
+                    OnlineSourceBanner(onRefresh = { vm.refreshOnlineConditions() })
+                } else if (state.isStale) {
                     StaleWarning { navController.navigate(Routes.CONDITIONS) }
                 }
 
@@ -123,11 +175,42 @@ fun ThermalScreen(navController: NavController, vm: ThermalViewModel = viewModel
                 ) {
                     Icon(Icons.Default.Refresh, "Update", modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Update Conditions")
+                    Text("Override with Manual Conditions")
                 }
             }
 
             Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun OnlineSourceBanner(onRefresh: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = WildBlue.copy(alpha = 0.10f)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Default.Cloud, "Online",
+                tint = WildBlue,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Conditions auto-filled from internet (Open-Meteo)",
+                style = MaterialTheme.typography.bodySmall,
+                color = WildBlue,
+                modifier = Modifier.weight(1f)
+            )
+            TextButton(onClick = onRefresh, contentPadding = PaddingValues(4.dp)) {
+                Text("Refresh", style = MaterialTheme.typography.labelSmall, color = WildBlue)
+            }
         }
     }
 }

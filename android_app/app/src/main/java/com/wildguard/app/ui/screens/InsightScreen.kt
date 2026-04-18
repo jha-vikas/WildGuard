@@ -44,10 +44,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import com.wildguard.app.modules.uv.SunPositionCalculator
+import com.wildguard.app.modules.uv.UVIndexCalculator
 
-// ── View State ───────────────────────────────────────────────────────────
+// ── Raw sensor snapshot for offline / no-LLM display ─────────────────────
+
+data class RawSnapshot(
+    val uvIndex: Double?,
+    val uvCategory: String?,
+    val sunAltDeg: Double?,
+    val sunAzDeg: Double?,
+    val sunriseLocal: String?,
+    val sunsetLocal: String?,
+    val pressureHpa: Float?,
+    val compassDeg: Float?,
+    val altitudeM: Double?,
+    val locationStr: String?,
+    val speedKmh: Float?
+)
+
+// ── View State ────────────────────────────────────────────────────────────
 
 data class InsightUiState(
     val hasProvider: Boolean = false,
@@ -64,7 +84,8 @@ data class InsightUiState(
     val bindingAnalysis: BindingAnalysis? = null,
     val showBindingInput: Boolean = false,
     val errorMessage: String? = null,
-    val pendingPromptReview: String? = null
+    val pendingPromptReview: String? = null,
+    val rawSnapshot: RawSnapshot? = null
 )
 
 sealed class SensorHealthState {
@@ -114,10 +135,10 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
     fun updateSensor(sensor: SensorState) {
         currentSensor = sensor
         driftAnalyzer.recordSample(sensor, null)
-        _state.value = _state.value.copy(driftRisk = driftAnalyzer.getRiskLevel())
 
         val check = consistencyChecker.check(sensor)
         _state.value = _state.value.copy(
+            driftRisk = driftAnalyzer.getRiskLevel(),
             sensorHealth = when (check) {
                 is ConsistencyCheckResult.Consistent -> SensorHealthState.Healthy
                 is ConsistencyCheckResult.Divergent -> SensorHealthState.Warning(
@@ -125,7 +146,74 @@ class InsightViewModel(application: Application) : AndroidViewModel(application)
                 )
                 is ConsistencyCheckResult.Inconclusive -> SensorHealthState.NoData(check.reason)
                 is ConsistencyCheckResult.NoData -> SensorHealthState.NoData("Waiting for sensor data")
+            },
+            rawSnapshot = buildRawSnapshot(sensor)
+        )
+    }
+
+    private fun buildRawSnapshot(sensor: SensorState): RawSnapshot {
+        val loc = sensor.location
+        val now = System.currentTimeMillis()
+        var uvIndex: Double? = null
+        var uvCategory: String? = null
+        var sunAltDeg: Double? = null
+        var sunAzDeg: Double? = null
+        var sunriseLocal: String? = null
+        var sunsetLocal: String? = null
+
+        if (loc != null) {
+            val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = now }
+            val sun = SunPositionCalculator.compute(
+                loc.latitude, loc.longitude,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH) + 1,
+                cal.get(Calendar.DAY_OF_MONTH),
+                cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE) / 60.0
+            )
+            sunAltDeg = sun.altitudeDeg
+            sunAzDeg = sun.azimuthDeg
+
+            val uv = UVIndexCalculator.compute(
+                sunPosition = sun,
+                altitudeMeters = loc.altitudeGps ?: 0.0,
+                lightLux = sensor.lightLux,
+                lat = loc.latitude,
+                lon = loc.longitude,
+                timeMillis = now
+            )
+            uvIndex = uv.uvIndex
+            uvCategory = uv.category
+
+            val tzOffH = TimeZone.getDefault().getOffset(now) / 3_600_000.0
+            fun fmtH(utcH: Double): String {
+                val local = utcH + tzOffH
+                val h = local.toInt().coerceIn(0, 23)
+                val m = ((local - local.toInt()) * 60).toInt().coerceIn(0, 59)
+                return "%02d:%02d".format(h, m)
             }
+            sunriseLocal = fmtH(sun.sunriseUtc)
+            sunsetLocal  = fmtH(sun.sunsetUtc)
+        }
+
+        val locStr = if (loc != null) {
+            "%.4f°%s, %.4f°%s".format(
+                Math.abs(loc.latitude),  if (loc.latitude  >= 0) "N" else "S",
+                Math.abs(loc.longitude), if (loc.longitude >= 0) "E" else "W"
+            )
+        } else null
+
+        return RawSnapshot(
+            uvIndex      = uvIndex,
+            uvCategory   = uvCategory,
+            sunAltDeg    = sunAltDeg,
+            sunAzDeg     = sunAzDeg,
+            sunriseLocal = sunriseLocal,
+            sunsetLocal  = sunsetLocal,
+            pressureHpa  = sensor.pressureHpa,
+            compassDeg   = sensor.compassHeadingDeg,
+            altitudeM    = loc?.altitudeGps,
+            locationStr  = locStr,
+            speedKmh     = loc?.speedMps?.let { it * 3.6f }
         )
     }
 
@@ -257,6 +345,10 @@ fun InsightScreen(navController: NavController) {
         ) {
             if (!state.hasProvider) {
                 item { NoProviderCard() }
+                // Still show raw sensor values even without a provider
+                if (state.rawSnapshot != null) {
+                    item { RawFactorsCard(state.rawSnapshot) }
+                }
             } else {
                 item { ProviderHeader(state.providerName, state.isLoading) { vm.runAllInsights() } }
 
@@ -264,23 +356,16 @@ fun InsightScreen(navController: NavController) {
                     item { SkeletonCard() }
                     item { SkeletonCard() }
                 } else if (state.isOffline) {
-                    item { OfflineCard() }
+                    // LLM unavailable — show real sensor values instead of empty card
+                    item { RawFactorsCard(state.rawSnapshot) }
                 } else {
-                    // Tactical Windows
+                    // LLM results
                     item { TacticalWindowsCard(state.tacticalWindows, state.tacticalSeriesStartMs) }
 
-                    // Drift Status
-                    item { DriftStatusCard(state.driftRisk, state.driftWarning) }
-
-                    // Celestial Events
                     if (state.celestialEvents.isNotEmpty()) {
                         item { CelestialEventsCard(state.celestialEvents) }
                     }
 
-                    // Sensor Health
-                    item { SensorHealthCard(state.sensorHealth, state.consistencyAlert) }
-
-                    // Binding Constraint
                     item {
                         BindingConstraintSection(
                             analysis = state.bindingAnalysis,
@@ -291,11 +376,14 @@ fun InsightScreen(navController: NavController) {
                         )
                     }
 
-                    // Error
                     if (state.errorMessage != null) {
                         item { ErrorCard(state.errorMessage!!) }
                     }
                 }
+
+                // Always visible — computed locally, no LLM needed
+                item { DriftStatusCard(state.driftRisk, state.driftWarning) }
+                item { SensorHealthCard(state.sensorHealth, state.consistencyAlert) }
             }
         }
     }
@@ -738,27 +826,106 @@ private fun BindingResultContent(analysis: BindingAnalysis) {
 }
 
 @Composable
-private fun OfflineCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.WifiOff, contentDescription = null, tint = WildAmber)
-            Spacer(Modifier.width(12.dp))
-            Column {
-                Text("LLM Unavailable", style = MaterialTheme.typography.titleSmall)
-                Text(
-                    "Showing raw factor matrix with relevant sensor values",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
+private fun RawFactorsCard(snapshot: RawSnapshot?) {
+    LlmCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Default.WifiOff,
+                contentDescription = null,
+                tint = WildAmber,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Raw Sensor Values", style = MaterialTheme.typography.titleSmall)
+        }
+        Text(
+            "LLM not used — showing live on-device readings.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+        )
+        Spacer(Modifier.height(12.dp))
+
+        if (snapshot == null) {
+            Text(
+                "Waiting for sensor data…",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+            return@LlmCard
+        }
+
+        val rows = buildList {
+            if (snapshot.uvIndex != null && snapshot.uvCategory != null) {
+                add("UV Index" to "${"%.1f".format(snapshot.uvIndex)}  (${snapshot.uvCategory})")
+            }
+            if (snapshot.sunAltDeg != null && snapshot.sunAzDeg != null) {
+                val above = if (snapshot.sunAltDeg >= 0) "above horizon" else "below horizon"
+                add("Sun" to "${"%.0f".format(snapshot.sunAltDeg)}° alt · ${"%.0f".format(snapshot.sunAzDeg)}° az · $above")
+            }
+            if (snapshot.sunriseLocal != null && snapshot.sunsetLocal != null) {
+                add("Daylight" to "↑ ${snapshot.sunriseLocal}  ↓ ${snapshot.sunsetLocal}")
+            }
+            if (snapshot.pressureHpa != null) {
+                add("Pressure" to "${"%.1f".format(snapshot.pressureHpa)} hPa")
+            }
+            if (snapshot.compassDeg != null) {
+                val dir = compassDir(snapshot.compassDeg.toDouble())
+                add("Compass" to "${"%.0f".format(snapshot.compassDeg)}° $dir")
+            }
+            if (snapshot.altitudeM != null) {
+                add("Altitude" to "${"%.0f".format(snapshot.altitudeM)} m")
+            }
+            if (snapshot.speedKmh != null && snapshot.speedKmh > 0.3f) {
+                add("Speed" to "${"%.1f".format(snapshot.speedKmh)} km/h")
+            }
+            if (snapshot.locationStr != null) {
+                add("Location" to snapshot.locationStr)
+            }
+        }
+
+        if (rows.isEmpty()) {
+            Text(
+                "No sensor data yet — grant location permission and wait a moment.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+        } else {
+            rows.forEach { (label, value) ->
+                RawRow(label = label, value = value)
+                Spacer(Modifier.height(6.dp))
             }
         }
     }
+}
+
+@Composable
+private fun RawRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            modifier = Modifier.widthIn(min = 72.dp)
+        )
+        Text(
+            value,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 12.dp)
+        )
+    }
+}
+
+private fun compassDir(deg: Double): String {
+    val dirs = arrayOf("N","NNE","NE","ENE","E","ESE","SE","SSE",
+                       "S","SSW","SW","WSW","W","WNW","NW","NNW")
+    return dirs[((deg + 11.25) / 22.5).toInt() % 16]
 }
 
 @Composable

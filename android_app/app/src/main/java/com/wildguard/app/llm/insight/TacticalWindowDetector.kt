@@ -5,12 +5,19 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
+import com.wildguard.app.core.data.AssetRepository
 import com.wildguard.app.core.model.SensorState
 import com.wildguard.app.llm.prompt.PromptTemplates
 import com.wildguard.app.llm.provider.LlmProvider
+import com.wildguard.app.modules.tide.TideCalculator
+import com.wildguard.app.modules.tide.TidalStation
+import com.wildguard.app.modules.tide.TidalStationRepository
 import com.wildguard.app.modules.uv.SunPositionCalculator
 import com.wildguard.app.modules.uv.UVIndexCalculator
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 data class TimeSeriesPoint(
@@ -54,6 +61,10 @@ class TacticalWindowDetector(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("wildguard_constraints", Context.MODE_PRIVATE)
     private val gson = Gson()
+    private val stationRepo = TidalStationRepository(AssetRepository(context))
+
+    // Maximum distance to consider a tidal station relevant for the time series.
+    private val TIDE_RADIUS_KM = 300.0
 
     fun generate24hTimeSeries(
         sensor: SensorState,
@@ -61,6 +72,11 @@ class TacticalWindowDetector(context: Context) {
     ): List<TimeSeriesPoint> {
         val loc = sensor.location ?: return emptyList()
         val tzOffsetH = TimeZone.getDefault().getOffset(startMs) / 3600_000.0
+
+        // Resolve nearest tidal station once — null if user is inland (> TIDE_RADIUS_KM).
+        val nearestStation: TidalStation? = stationRepo
+            .findNearby(loc.latitude, loc.longitude, TIDE_RADIUS_KM)
+            .minByOrNull { TidalStationRepository.haversineKm(loc.latitude, loc.longitude, it.lat, it.lon) }
 
         val points = mutableListOf<TimeSeriesPoint>()
         for (i in 0 until 96) {
@@ -91,6 +107,11 @@ class TacticalWindowDetector(context: Context) {
                 timeMillis = pointMs
             ).uvIndex
 
+            val tideHeight = nearestStation?.let { TideCalculator.computeTideHeight(it, pointMs) }
+            val tideDirection = nearestStation?.let {
+                if (TideCalculator.isRising(it, pointMs)) "rising" else "falling"
+            }
+
             points.add(
                 TimeSeriesPoint(
                     timeMs = pointMs,
@@ -98,8 +119,8 @@ class TacticalWindowDetector(context: Context) {
                     uv = uv,
                     sunAzDeg = sun.azimuthDeg,
                     sunElDeg = sun.altitudeDeg,
-                    tideHeight = null,
-                    tideDirection = null
+                    tideHeight = tideHeight,
+                    tideDirection = tideDirection
                 )
             )
         }
@@ -121,8 +142,12 @@ class TacticalWindowDetector(context: Context) {
 
     fun buildPrompt(
         timeSeries: List<TimeSeriesPoint>,
-        profile: ConstraintProfile
+        profile: ConstraintProfile,
+        sensor: SensorState? = null,
+        seriesStartMs: Long = System.currentTimeMillis()
     ): String {
+        val hasTide = timeSeries.any { it.tideHeight != null }
+
         val tsCompact = timeSeries.joinToString("\n") { pt ->
             "%.1fh|UV%.1f|az%.0f|el%.0f%s".format(
                 pt.localHour, pt.uv, pt.sunAzDeg, pt.sunElDeg,
@@ -136,13 +161,30 @@ class TacticalWindowDetector(context: Context) {
             profile.minSunElDeg?.let { appendLine("  minSunEl: $it°") }
             profile.maxSunElDeg?.let { appendLine("  maxSunEl: $it°") }
             profile.preferredBearing?.let { appendLine("  preferredBearing: $it° ± ${profile.bearingToleranceDeg ?: 30}°") }
-            profile.requireRisingTide?.let { appendLine("  requireRisingTide: $it") }
-            profile.minTideHeight?.let { appendLine("  minTideHeight: ${it}m") }
-            profile.maxTideHeight?.let { appendLine("  maxTideHeight: ${it}m") }
+            if (hasTide) {
+                profile.requireRisingTide?.let { appendLine("  requireRisingTide: $it") }
+                profile.minTideHeight?.let { appendLine("  minTideHeight: ${it}m") }
+                profile.maxTideHeight?.let { appendLine("  maxTideHeight: ${it}m") }
+                if (profile.requireRisingTide == null && profile.minTideHeight == null && profile.maxTideHeight == null) {
+                    appendLine("  tide: data present — include tidal state in window quality and bindingConstraint where relevant")
+                }
+            }
             profile.notes?.let { appendLine("  notes: $it") }
         }
 
+        val loc = sensor?.location
+        val latStr  = loc?.let { "%.4f".format(it.latitude) } ?: "unknown"
+        val lonStr  = loc?.let { "%.4f".format(it.longitude) } ?: "unknown"
+        val dateStr = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(seriesStartMs))
+        val pressureContext = sensor?.pressureHpa?.let { hpa ->
+            "Current barometric pressure: ${"%.1f".format(hpa)} hPa."
+        } ?: ""
+
         return PromptTemplates.TACTICAL_WINDOW_USER_TEMPLATE
+            .replace("{LAT}", latStr)
+            .replace("{LON}", lonStr)
+            .replace("{DATE}", dateStr)
+            .replace("{PRESSURE_CONTEXT}", pressureContext)
             .replace("{TIME_SERIES}", tsCompact)
             .replace("{CONSTRAINTS}", constraintStr)
     }
@@ -157,7 +199,7 @@ class TacticalWindowDetector(context: Context) {
         if (ts.isEmpty()) {
             Result.failure(Exception("No location data available"))
         } else {
-            val prompt = buildPrompt(ts, profile)
+            val prompt = buildPrompt(ts, profile, sensor, seriesStartMs)
             val response = provider.generate(prompt, PromptTemplates.TACTICAL_WINDOW_SYSTEM)
 
             if (response.error != null) {

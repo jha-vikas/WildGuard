@@ -14,6 +14,11 @@ object PromptTemplates {
     """.trimIndent()
 
     val TACTICAL_WINDOW_USER_TEMPLATE = """
+        Location: {LAT}°, {LON}° — {DATE}
+        {PRESSURE_CONTEXT}
+        Use your knowledge of typical climate, temperature range, and weather patterns for this location and season.
+        Factor temperature and humidity into comfort/risk constraints even if not in the sensor series.
+
         24h sensor forecast (15-min intervals, format: localHour|UV|sunAz|sunEl[|tide]):
         {TIME_SERIES}
 
