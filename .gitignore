@@ -1,0 +1,50 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.idea_modules/
+
+# Gradle
+.gradle/
+build/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
+local.properties
+android_app/app/release/
+*.ap_
+*.apk
+*.aab
+*.dex
+
+# Signing / secrets
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+agconnect-services.json
+
+# Generated / caches
+captures/
+.externalNativeBuild/
+.cxx/
+*.hprof
+lint/
+
+# Editor backups
+*~
+*.swp
+*.swo
