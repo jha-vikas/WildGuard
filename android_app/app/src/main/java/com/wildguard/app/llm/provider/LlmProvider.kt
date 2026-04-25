@@ -5,6 +5,13 @@ interface LlmProvider {
     val displayName: String
     suspend fun generate(prompt: String, systemPrompt: String? = null): LlmResponse
     fun isConfigured(): Boolean
+
+    suspend fun generateWithTools(
+        messages: List<com.wildguard.app.llm.agent.ProviderMessage>,
+        tools: List<com.wildguard.app.llm.agent.ToolSchema>,
+        systemPrompt: String?
+    ): com.wildguard.app.llm.agent.ToolAwareResponse =
+        com.wildguard.app.llm.agent.ToolAwareResponse(error = "Function calling not supported by this provider")
 }
 
 data class LlmResponse(
