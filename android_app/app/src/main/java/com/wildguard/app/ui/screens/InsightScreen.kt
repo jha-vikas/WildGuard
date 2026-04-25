@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import com.wildguard.app.ui.screens.agent.AgentCard
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -407,6 +408,7 @@ fun InsightScreen(navController: NavController) {
                     item { RawFactorsCard(state.rawSnapshot) }
                 }
             } else {
+                item { AgentCard() }
                 item { ProviderHeader(state.providerName, state.isLoading) { vm.runAllInsights() } }
 
                 if (state.isLoading) {
